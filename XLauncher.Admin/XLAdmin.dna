@@ -1,0 +1,5 @@
+<DnaLibrary Name="XLauncher" Language="C#" RuntimeVersion="v4.0">
+  <ExternalLibrary Path="XLauncher.Admin.dll" Pack="true" />
+  <Reference Path="XLauncher.Entities.dll" Pack="false" />
+  <Reference Path="NLog.dll" Pack="false" />
+</DnaLibrary>

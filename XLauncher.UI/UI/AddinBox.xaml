@@ -1,0 +1,81 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:xui="clr-namespace:XLauncher.UI"
+        mc:Ignorable="d"
+        x:Class="XLauncher.UI.AddinBox"
+        Icon="/Resources/Rocket.png"
+        SizeToContent="WidthAndHeight"
+>
+
+  <Window.Resources>
+    <sys:Boolean x:Key="IsFullBox">true</sys:Boolean>
+    <sys:Double x:Key="TextOpacity">1</sys:Double>
+    <sys:String x:Key="KeyText">Key:</sys:String>
+  </Window.Resources>
+
+  <StackPanel>
+
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Margin="8,0,5,0"
+                 Opacity="{DynamicResource TextOpacity}"
+                 Text="Framework:"
+                 VerticalAlignment="Center"
+      />
+      <ComboBox IsEnabled="{DynamicResource IsFullBox}"
+                ItemsSource="{Binding Frameworks, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Window}}}"
+                Margin="0,5,8,5"
+                MinWidth="277"
+                SelectedItem="{Binding Framework}"
+                VerticalAlignment="Center"
+      />
+    </StackPanel>
+
+    <StackPanel Orientation="Horizontal"
+                VerticalAlignment="Center"
+    >
+      <Button Content="Path:"
+              Height="22" Width="38"
+              Margin="8,5,5,5"
+              Click="SelectPath"
+      />
+      <TextBox x:Name="PathBox"
+               Margin="0,5,8,5"
+               MinWidth="300"
+               Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}"
+      />
+    </StackPanel>
+
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Margin="8,5,5,10"
+                 Opacity="{DynamicResource TextOpacity}"
+                 Text="Arch:"
+                 VerticalAlignment="Center"
+      />
+      <ComboBox x:Name="ArchBox"
+                IsEnabled="{DynamicResource IsFullBox}"
+                ItemsSource="{Binding ArchTypes}"
+                Margin="0,5,0,10"
+                SelectedItem="{Binding Arch}"
+                VerticalAlignment="Center"
+      />
+      <CheckBox Content="Read only"
+                IsChecked="{Binding ReadOnly}"
+                Margin="17,5,0,10"
+                VerticalAlignment="Center"
+      />
+      <TextBlock Margin="13,4,5,10"
+                 Text="{DynamicResource KeyText}"
+                 VerticalAlignment="Center"
+      />
+      <TextBox Margin="0,5,8,10"
+               Text="{Binding Key, UpdateSourceTrigger=PropertyChanged}"
+               Width="136"
+      />
+    </StackPanel>
+
+  </StackPanel>
+  
+</Window>

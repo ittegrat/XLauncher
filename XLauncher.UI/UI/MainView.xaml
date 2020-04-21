@@ -1,0 +1,525 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:ee="clr-namespace:XLauncher.Entities.Environments;assembly=XLauncher.Entities"
+        xmlns:xui="clr-namespace:XLauncher.UI"
+        mc:Ignorable="d"
+        x:Class="XLauncher.UI.MainView"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="XLauncher"
+        Icon="/Resources/Rocket.png"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="CanMinimize"
+>
+  <StackPanel>
+    <TabControl>
+
+      <TabItem Header="Environments">
+        <StackPanel x:Name="_EnvPanel"  Orientation="Horizontal">
+
+          <StackPanel>
+
+            <ListBox x:Name="EnvList"
+                     ItemsSource="{Binding Environments, Mode=OneWay}"
+                     Width="180" Height="290"
+                     Margin="3,5,3,0"
+                     SelectionChanged="OnSelectEnvironment"
+            >
+
+              <ListBox.GroupStyle>
+                <GroupStyle>
+                  <GroupStyle.HeaderTemplate>
+                    <DataTemplate>
+                      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Line HorizontalAlignment="Right" VerticalAlignment="Center" Stroke="#104080" X2="30" StrokeThickness="1"/>
+                        <TextBlock Text="{Binding Name}" Foreground="#104080" FontWeight="Bold" Padding="8,0,8,0"/>
+                        <Line HorizontalAlignment="Left" VerticalAlignment="Center" Stroke="#104080" X2="30" StrokeThickness="1" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+              </ListBox.GroupStyle>
+
+              <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                  <Setter Property="Padding" Value="0" />
+                  <Setter Property="Margin" Value="0" />
+                  <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+              </ListBox.ItemContainerStyle>
+
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+
+              <ListBox.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="Clone" Command="{Binding CmdEnvClone}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Clone.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Reset" Command="{Binding CmdEnvReset}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Reset.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Rename" Command="{Binding CmdEnvRename}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Rename.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Delete" Command="{Binding CmdEnvDelete}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Delete.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Export" Command="{Binding CmdEnvExport}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/DownArrow.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <Separator />
+                  <MenuItem Header="Import" Command="{Binding CmdEnvImport}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/UpArrow.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Reload" Command="{Binding CmdEnvReload}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Reload.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                </ContextMenu>
+              </ListBox.ContextMenu>
+
+            </ListBox>
+
+            <Label Content="Global Addins:"
+                   Margin="0,2,0,0"
+                   Target="{Binding ElementName=GAList}"
+            />
+            <ListBox x:Name="GAList"
+                     ContextMenuOpening="RaiseCanExecuteChanged"
+                     ItemsSource="{Binding LocalSettings.GlobalAddins, Source={x:Static xui:Configuration.Instance}, Mode=OneWay}"
+                     HorizontalAlignment="Left"
+                     Margin="4,0,3,0"
+                     Width="180" Height="81"
+            >
+
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <CheckBox Content="{Binding DisplayName}"
+                            IsChecked="{Binding Active}"
+                            ToolTip="{Binding Path, Mode=OneWay}"
+                  >
+                    <CheckBox.Style>
+                      <Style TargetType="{x:Type CheckBox}">
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding ReadOnly}" Value="false">
+                            <Setter Property="Foreground" Value="{Binding RWColor}"/>
+                            <Setter Property="FontWeight" Value="DemiBold"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </CheckBox.Style>
+                  </CheckBox>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+
+              <ListBox.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="Enable all" Command="{Binding CmdGaiEnableAll}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Checked.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Disable all" Command="{Binding CmdGaiDisableAll}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Unchecked.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <Separator />
+                  <MenuItem Header="Add" Command="{Binding CmdGaiAdd}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Add.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Edit" Command="{Binding CmdGaiEdit}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Edit.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Delete" Command="{Binding CmdGaiDelete}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/Delete.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <Separator />
+                  <MenuItem Header="Move up" Command="{Binding CmdGaiMoveUp}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/UpArrow.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="Move down" Command="{Binding CmdGaiMoveDown}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/DownArrow.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
+                </ContextMenu>
+              </ListBox.ContextMenu>
+
+            </ListBox>
+
+            <Button Height="28" Width="78"
+                    Margin="0,8,0,6"
+                    Content="Launch"
+                    Command="{Binding CmdLaunch}"
+            />
+
+          </StackPanel>
+
+          <TabControl x:Name="EnvView"
+                      Width="550" Height="430"
+                      Margin="0,5,4,0"
+                      VerticalAlignment="Top"
+                      TabStripPlacement="Bottom"
+          >
+
+            <TabItem Header="Parameters">
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="ControlsList">
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Addins">
+              <ListView x:Name="AddinsList"
+                        BorderThickness="0"
+                        ContextMenuOpening="RaiseCanExecuteChanged"
+                        ItemsSource="{Binding Addins, Mode=OneWay}"
+                        Focusable="False"
+              >
+
+                <ListView.Resources>
+                  <Style x:Key="AddinPath" TargetType="{x:Type TextBlock}">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Arch}" Value="x86">
+                        <Setter Property="Foreground" Value="{Binding X86Color}"/>
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Arch}" Value="x64">
+                        <Setter Property="Foreground" Value="{Binding X64Color}"/>
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding ReadOnly}" Value="false">
+                        <Setter Property="FontWeight" Value="DemiBold"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                  <Style x:Key="AddinArch" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource AddinPath}">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding LocalSettings.ShowToolTips, Source={x:Static xui:Configuration.Instance}}" Value="true">
+                        <Setter Property="ToolTip" Value="{Binding Id}"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ListView.Resources>
+
+                <ListView.View>
+                  <GridView>
+
+                    <GridViewColumn Header="Arch" Width="40">
+                      <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                          <TextBlock HorizontalAlignment="Center" Style="{StaticResource AddinArch}" Text="{Binding Arch}" />
+                        </DataTemplate>
+                      </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Path" Width="Auto">
+                      <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                          <TextBlock Style="{StaticResource AddinPath}" Text="{Binding Path}" />
+                        </DataTemplate>
+                      </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                  </GridView>
+                </ListView.View>
+
+                <ListView.GroupStyle>
+                  <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                          <Line HorizontalAlignment="Right" VerticalAlignment="Center" Stroke="#104080" X2="30" StrokeThickness="1"/>
+                          <TextBlock Text="{Binding Name}" Foreground="#104080" FontWeight="Bold" Padding="8,0,8,0"/>
+                          <Line HorizontalAlignment="Left" VerticalAlignment="Center" Stroke="#104080" X2="30" StrokeThickness="1" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                  </GroupStyle>
+                </ListView.GroupStyle>
+
+                <ListView.ItemContainerStyle>
+                  <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Foreground" Value="Black" />
+                  </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="Add" Command="{Binding CmdAiAdd}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/Add.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Edit" Command="{Binding CmdAiEdit}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/Edit.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Delete" Command="{Binding CmdAiDelete}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/Delete.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Move up" Command="{Binding CmdAiMoveUp}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/UpArrow.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Move down" Command="{Binding CmdAiMoveDown}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/DownArrow.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                  </ContextMenu>
+                </ListView.ContextMenu>
+
+              </ListView>
+            </TabItem>
+
+            <TabItem Header="Variables">
+              <ListView x:Name="EVarsList"
+                        BorderThickness="0"
+                        ContextMenuOpening="RaiseCanExecuteChanged"
+                        Focusable="False"
+                        ItemsSource="{Binding EVars, Mode=OneWay}"
+              >
+
+                <ListView.View>
+                  <GridView>
+                    <GridViewColumn Header="Variable" Width="150" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="Value" Width="Auto" DisplayMemberBinding="{Binding Value}" />
+                  </GridView>
+                </ListView.View>
+
+                <ListView.GroupStyle>
+                  <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                          <Line HorizontalAlignment="Right" VerticalAlignment="Center" Stroke="#104080" X2="30" StrokeThickness="1"/>
+                          <TextBlock Text="{Binding Name}" Foreground="#104080" FontWeight="Bold" Padding="8,0,8,0"/>
+                          <Line HorizontalAlignment="Left" VerticalAlignment="Center" Stroke="#104080" X2="30" StrokeThickness="1" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                  </GroupStyle>
+                </ListView.GroupStyle>
+
+                <ListView.ItemContainerStyle>
+                  <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Foreground" Value="Black" />
+                  </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="Add" Command="{Binding CmdEvAdd}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/Add.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Edit" Command="{Binding CmdEvEdit}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/Edit.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Delete" Command="{Binding CmdEvDelete}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/Delete.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Move up" Command="{Binding CmdEvMoveUp}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/UpArrow.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Move down" Command="{Binding CmdEvMoveDown}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/DownArrow.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                  </ContextMenu>
+                </ListView.ContextMenu>
+
+              </ListView>
+            </TabItem>
+
+          </TabControl>
+
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="Settings">
+        <StackPanel DataContext="{Binding LocalSettings, Source={x:Static xui:Configuration.Instance}}"
+                    Width="{Binding ActualWidth, ElementName=_EnvPanel}"
+                    Height="{Binding ActualHeight, ElementName=_EnvPanel}"
+        >
+          <StackPanel.Resources>
+            <ObjectDataProvider x:Key="ExcelArchTypes"
+                                ObjectType="{x:Type sys:Enum}"
+                                MethodName="GetValues"
+            >
+              <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="ee:ArchType"/>
+              </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+          </StackPanel.Resources>
+
+          <GroupBox Header="UI Settings"
+                    Margin="3,0,3,0"
+          >
+            <Grid Margin="2,4,2,2">
+
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+
+              <CheckBox Grid.Row="0" Grid.Column="0"
+                        Content="Confirm delete actions"
+                        IsChecked="{Binding ConfirmDelete}"
+              />
+              <CheckBox Grid.Row="1" Grid.Column="0"
+                        Content="Load Global Addins First"
+                        IsChecked="{Binding LoadGlobalsFirst}"
+              />
+              <CheckBox Grid.Row="0" Grid.Column="1"
+                        Content="Restore Tab"
+                        IsChecked="{Binding RestoreTab}"
+              />
+              <CheckBox Grid.Row="1" Grid.Column="1"
+                        Content="Show ToolTips"
+                        IsChecked="{Binding ShowToolTips}"
+              />
+
+              <TextBlock Grid.Row="0" Grid.Column="2" Text="Version: ">
+                <TextBlock Text="{Binding Source={x:Static xui:App.Version}}" />
+              </TextBlock>
+              <TextBlock Grid.Row="1" Grid.Column="2" Text="User: ">
+                <TextBlock Text="{Binding Source={x:Static xui:App.Domain}}" />
+                <TextBlock Text="\" />
+                <TextBlock Text="{Binding Source={x:Static xui:App.User}}" />
+                <TextBlock Text="@" />
+                <TextBlock Text="{Binding Source={x:Static xui:App.Machine}}" />
+              </TextBlock>
+
+            </Grid>
+          </GroupBox>
+
+          <GroupBox Header="Excel Configuration"
+                    Margin="3,2,3,0"
+          >
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Margin="2,2,0,0"
+                         Text="Arch:"
+                         VerticalAlignment="Center"
+              />
+              <ComboBox x:Name="ExcelArchBox"
+                        Margin="4,4,0,3"
+                        ItemsSource="{Binding Source={StaticResource ExcelArchTypes}}"
+                        SelectedItem="{Binding ExcelArch}"
+              />
+              <Button Content="Path:"
+                      Height="22" Width="42"
+                      Margin="8,2,0,0"
+                      Click="SelectExcelPath"
+              />
+              <TextBox x:Name="ExcelPathBox"
+                       Margin="4,2,0,0"
+                       Text="{Binding ExcelPath, UpdateSourceTrigger=PropertyChanged}"
+                       Height="22" Width="590"
+                       VerticalContentAlignment="Center"
+              />
+            </StackPanel>
+          </GroupBox>
+
+          <GroupBox Header="Additional Environment Roots"
+                    Margin="3,2,3,0"
+          >
+            <ListBox ItemsSource="{Binding LocalRoots}" />
+          </GroupBox>
+
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="Logs">
+        <ListBox ItemsSource="{Binding Source={x:Static xui:App.Logs}}"
+                 Width="{Binding ActualWidth, ElementName=_EnvPanel}"
+                 Height="{Binding ActualHeight, ElementName=_EnvPanel}"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch"
+        >
+
+          <ListBox.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Clear logs" Command="{Binding CmdClearLogs}">
+                <MenuItem.Icon>
+                  <Image Source="/Resources/Delete.png"/>
+                </MenuItem.Icon>
+              </MenuItem>
+              <MenuItem Header="Open log folder" Command="{Binding CmdOpenLogFolder}">
+                <MenuItem.Icon>
+                  <Image Source="/Resources/OpenedFolder.png"/>
+                </MenuItem.Icon>
+              </MenuItem>
+              <Separator />
+              <MenuItem Header="Reset log levels" Command="{Binding CmdResetLogLevel}">
+                <MenuItem.Icon>
+                  <Image Source="/Resources/Reset.png"/>
+                </MenuItem.Icon>
+              </MenuItem>
+              <Separator />
+              <MenuItem Header="Debug log level" Command="{Binding CmdSetDebugLogLevel}">
+                <MenuItem.Icon>
+                  <Image Source="/Resources/Checked.png"/>
+                </MenuItem.Icon>
+              </MenuItem>
+              <MenuItem Header="Trace log level" Command="{Binding CmdSetTraceLogLevel}">
+                <MenuItem.Icon>
+                  <Image Source="/Resources/Edit.png"/>
+                </MenuItem.Icon>
+              </MenuItem>
+            </ContextMenu>
+          </ListBox.ContextMenu>
+
+        </ListBox>
+      </TabItem>
+
+    </TabControl>
+  </StackPanel>
+</Window>

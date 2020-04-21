@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="XLauncher.Authorization" version="0.1.0"
+    targetNamespace="urn:schemas-bimi-com:XLauncher:Authorization"
+    elementFormDefault="qualified" attributeFormDefault="unqualified"
+    xmlns="urn:schemas-bimi-com:XLauncher:Authorization"
+    xmlns:xc="urn:schemas-bimi-com:XLauncher:Common"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+  <xs:import namespace="urn:schemas-bimi-com:XLauncher:Common" schemaLocation="Common.xsd" />
+
+  <xs:element name="authDB" type="AuthDB" />
+
+  <xs:complexType name="AuthDB" >
+      <xs:sequence>
+        <xs:element name="import" type="xc:PathInfo" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="domain" type="Domain" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Domain">
+    <xs:sequence>
+      <xs:element name="user" type="User" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="authType" type="AuthType" default="allow" />
+  </xs:complexType>
+
+  <xs:complexType name="User">
+    <xs:sequence>
+      <xs:element name="machine" type="Machine" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="email" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="Machine">
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:simpleType name="AuthType">
+    <xs:annotation>
+      <xs:documentation>Authorization Type enumeration</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="allow"/>
+      <xs:enumeration value="deny"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

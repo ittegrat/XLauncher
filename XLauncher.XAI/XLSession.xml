@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<session
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="urn:schemas-bimi-com:XLauncher:Session"
+  title="Batch SimpleSession Test"
+  loadGlobalsFirst="true"
+>
+  <context name="Batch Session">
+    <param name="Session" type="String" value="SimpleSession" />
+    <param name="Param" type="String" value="A string value" />
+  </context>
+</session>

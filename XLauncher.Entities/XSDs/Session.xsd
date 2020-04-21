@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="XLauncher.Session" version="0.0.0"
+    targetNamespace="urn:schemas-bimi-com:XLauncher:Session"
+    elementFormDefault="qualified" attributeFormDefault="unqualified"
+    xmlns="urn:schemas-bimi-com:XLauncher:Session"
+    xmlns:xc="urn:schemas-bimi-com:XLauncher:Common"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+  <xs:import namespace="urn:schemas-bimi-com:XLauncher:Common" schemaLocation="Common.xsd" />
+
+  <xs:element name="session" type="Session" />
+
+  <xs:complexType name="Session">
+    <xs:sequence>
+      <xs:element name="addin" type="Addin" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="context" type="Context" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="title" type="xs:string" />
+    <xs:attribute name="loadGlobalsFirst" type="xs:boolean" default="true" />
+  </xs:complexType>
+
+  <xs:complexType name="Context">
+    <xs:sequence>
+      <xs:element name="addin" type="Addin" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="param" type="Param" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="version" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="Addin">
+    <xs:complexContent>
+      <xs:extension base="xc:PathInfo">
+        <xs:attribute name="readOnly" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Param">
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="type" type="ParamType" use="required" />
+    <xs:attribute name="value" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:simpleType name="ParamType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Boolean"/>
+      <xs:enumeration value="DateTime"/>
+      <xs:enumeration value="String"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1082
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XSDs", "XSDs", "{57176E19-DC1D-48DB-AD8E-127CA8C25E17}"
+	ProjectSection(SolutionItems) = preProject
+		Authorization.xsd = Authorization.xsd
+		Common.xsd = Common.xsd
+		Environments.xsd = Environments.xsd
+		Session.xsd = Session.xsd
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {593AF5D1-BE8F-4505-88FF-E818091AA5DA}
+	EndGlobalSection
+EndGlobal

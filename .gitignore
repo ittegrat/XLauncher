@@ -1,0 +1,8 @@
+# User files
+.vs/
+*.csproj.user
+
+# Build folder
+_build_/
+_dist_/
+XLauncher.Entities/XSDs/_out_/

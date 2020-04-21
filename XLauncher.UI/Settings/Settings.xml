@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LocalSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ExcelArch>x86</ExcelArch>
+  <ExcelPath>C:\Program Files (x86)\Microsoft Office\root\Office16\\Excel.exe</ExcelPath>
+  <LastEnvironmentId>User::TestBench</LastEnvironmentId>
+  <LocalRoots>
+    <string>C:\Development\NET_Projects\XLauncher\XLauncher.Entities\_test_\Environments\Examples</string>
+    <string>..\..\..\XLauncher.Entities\_test_\Environments\RealExamples</string>
+    <string>..\..\..\XLauncher.Entities\_test_\Environments\Test</string>
+  </LocalRoots>
+  <GlobalAddins>
+    <GlobalAddin>
+      <Active>true</Active>
+      <Path>C:\Development\_workspace_\NPL\XL-Libraries\MiniPDG.xll</Path>
+      <ReadOnly>false</ReadOnly>
+    </GlobalAddin>
+    <GlobalAddin>
+      <Active>true</Active>
+      <Path>C:\Development\_workspace_\NPL\XL-Libraries\SecTools.xll</Path>
+      <ReadOnly>true</ReadOnly>
+    </GlobalAddin>
+  </GlobalAddins>
+</LocalSettings>

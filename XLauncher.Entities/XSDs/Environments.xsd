@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="XLauncher.Environments" version="0.0.0"
+    targetNamespace="urn:schemas-bimi-com:XLauncher:Environments"
+    elementFormDefault="qualified" attributeFormDefault="unqualified"
+    xmlns="urn:schemas-bimi-com:XLauncher:Environments"
+    xmlns:xc="urn:schemas-bimi-com:XLauncher:Common"
+    xmlns:xe="urn:schemas-bimi-com:XLauncher:Environments"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+  <xs:import namespace="urn:schemas-bimi-com:XLauncher:Common" schemaLocation="Common.xsd" />
+
+  <xs:element name="environment" type="Environment" />
+  <xs:element name="framework" type="Framework">
+    <xs:key name="UEVar">
+      <xs:selector xpath="xe:evar" />
+      <xs:field xpath="@name" />
+    </xs:key>
+    <xs:unique name="UAddin">
+      <xs:selector xpath="xe:addin|xe:xll" />
+      <xs:field xpath="@key" />
+    </xs:unique>
+    <xs:key name="UControl">
+      <xs:selector xpath="xe:box/*" />
+      <xs:field xpath="@name" />
+    </xs:key>
+  </xs:element>
+
+  <xs:complexType name="Environment">
+    <xs:sequence>
+      <xs:element name="auth" type="xc:PathInfo" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="import" type="Import" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="group" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="Import">
+    <xs:complexContent>
+      <xs:extension base="xc:PathInfo">
+        <xs:attribute name="after" type="xs:string" />
+        <xs:attribute name="withAuth" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Framework">
+    <xs:sequence>
+      <xs:element name="evar" type="EVar" minOccurs="0" maxOccurs="unbounded" />
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="addin" type="Addin" />
+        <xs:element name="xll" type="XLL" />
+      </xs:choice>
+      <xs:element name="box" type="Box" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="after" type="xs:string" />
+    <xs:attribute name="version" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="EVar">
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="value" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Addin">
+    <xs:complexContent>
+      <xs:extension base="xc:PathInfo">
+        <xs:attribute name="key" type="xs:string" />
+        <xs:attribute name="readOnly" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="XLL">
+    <xs:complexContent>
+      <xs:extension base="Addin">
+        <xs:attribute name="arch" type="ArchType" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Box">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="checkBox" type="CheckBox" />
+      <xs:element name="comboBox" type="ComboBox" />
+      <xs:element name="comboBoxEx" type="ComboBoxEx" />
+      <xs:element name="datePicker" type="DatePicker" />
+      <xs:element name="nvp" type="NameValuePair" />
+      <xs:element name="textBox" type="TextBox" />
+    </xs:choice>
+    <xs:attribute name="text" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Control">
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="CheckBox">
+    <xs:complexContent>
+      <xs:extension base="Control">
+        <xs:attribute name="text" type="xs:string" />
+        <xs:attribute name="value" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ComboBox">
+    <xs:complexContent>
+      <xs:extension base="Control">
+        <xs:sequence>
+          <xs:element name="item" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="text" type="xs:string" />
+        <xs:attribute name="value" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ComboBoxEx">
+    <xs:complexContent>
+      <xs:extension base="ComboBox">
+        <xs:attribute name="active" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DatePicker">
+    <xs:complexContent>
+      <xs:extension base="Control">
+        <xs:attribute name="active" type="xs:boolean" default="false" />
+        <xs:attribute name="text" type="xs:string" />
+        <xs:attribute name="value" type="xs:date" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="NameValuePair">
+    <xs:complexContent>
+      <xs:extension base="Control">
+        <xs:attribute name="value" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="TextBox">
+    <xs:complexContent>
+      <xs:extension base="Control">
+        <xs:attribute name="text" type="xs:string" />
+        <xs:attribute name="value" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="ArchType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="x86"/>
+      <xs:enumeration value="x64"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

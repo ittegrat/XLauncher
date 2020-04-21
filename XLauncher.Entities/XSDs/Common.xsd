@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="XLauncher.Common" version="0.0.0"
+    targetNamespace="urn:schemas-bimi-com:XLauncher:Common"
+    elementFormDefault="qualified" attributeFormDefault="unqualified"
+    xmlns="urn:schemas-bimi-com:XLauncher:Common"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+  <xs:element name="pi" type="PathInfo" />
+
+  <xs:complexType name="PathInfo">
+    <xs:attribute name="path" type="xs:string" use="required" />
+  </xs:complexType>
+
+</xs:schema>
