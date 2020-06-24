@@ -23,8 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevUtils", "DevUtils", "{EB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLauncher.Setup", "XLauncher.Setup\XLauncher.Setup.csproj", "{1998166C-2BC4-4E24-8C4A-5E286239648C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLauncher.Admin", "XLauncher.Admin\XLauncher.Admin.csproj", "{ADFACEA2-4254-4F67-9719-1D011215C38C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{1998166C-2BC4-4E24-8C4A-5E286239648C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1998166C-2BC4-4E24-8C4A-5E286239648C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1998166C-2BC4-4E24-8C4A-5E286239648C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ADFACEA2-4254-4F67-9719-1D011215C38C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ADFACEA2-4254-4F67-9719-1D011215C38C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ADFACEA2-4254-4F67-9719-1D011215C38C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ADFACEA2-4254-4F67-9719-1D011215C38C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,7 +7,7 @@ namespace XLauncher.XAI
 {
 
   [ExcelFunction(Prefix = "XLauncher.")]
-  public static class XLauncherFunctions
+  public static class SheetFunctions
   {
 
     readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -97,7 +97,7 @@ namespace XLauncher.XAI
       if (Trigger is ExcelError)
         return Trigger;
 
-      return typeof(XLauncherFunctions).Assembly.GetName().Version.ToString();
+      return typeof(SheetFunctions).Assembly.GetName().Version.ToString();
 
     }
 

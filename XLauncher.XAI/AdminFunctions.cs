@@ -4,17 +4,24 @@ using System.Linq;
 
 using ExcelDna.Integration;
 
-namespace XLauncher.Admin
+namespace XLauncher.XAI
 {
 
   using Entities.Authorization;
   using Entities.Environments;
 
-  [ExcelFunction(Prefix = "XLauncher.")]
-  public static class XLauncherAdminFunctions
+  [ExcelFunction(
+    Prefix = "XLauncher.Admin."
+#if !DEBUG
+    , IsHidden = true
+#endif
+  )]
+  public static class AdminFunctions
   {
 
-    readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    static readonly char[] dumChars = new char[] { '\\', '@' };
+
+    static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     static List<(string Root, Environment Env)> Environments = new List<(string, Environment)>();
 
     public static object LoadEnvs(object[] Roots, object Trigger) {
@@ -24,7 +31,12 @@ namespace XLauncher.Admin
 
       try {
 
-        var roots = Roots.Cast<string>().Select(s => s.Trim()).ToList();
+        var roots = Roots
+          .Where(o => !(o is ExcelEmpty))
+          .Cast<string>()
+          .Select(s => s.Trim())
+          .ToList()
+        ;
 
         if (roots.Count == 0)
           return "#ERROR: empty roots";
@@ -52,29 +64,53 @@ namespace XLauncher.Admin
       }
 
     }
-    public static object EnvList(string Domain, string User, string Machine, string DefaultAuth, object Trigger) {
+    public static object UserEnvs(object[] Users, string DefaultAuth, object Trigger) {
 
       if (Trigger is ExcelError)
         return Trigger;
 
       try {
 
+        if (Environments.Count == 0)
+          return "#ERROR: no loaded environments";
+
+        var users = Users
+          .Where(o => !(o is ExcelEmpty))
+          .Cast<string>()
+          .Select(s => s.Trim())
+          .Distinct()
+        ;
+
+        if (!users.Any())
+          return "#ERROR: empty users";
+
         var defAuth = (AuthType)Enum.Parse(typeof(AuthType), DefaultAuth, true);
 
-        Domain = Domain.Trim().ToUpperInvariant();
-        User = User.Trim().ToUpperInvariant();
-        Machine = Machine.Trim().ToUpperInvariant();
+        var envs = new List<(string Domain, string User, string Machine, Environment Env, string Root)>();
 
-        var envs = Environments.Where(x => x.Env.IsAuthorized(Domain, User, Machine, defAuth)).ToList();
+        foreach (var user in users) {
+          var dum = user.Split(dumChars);
+          var d = dum[0].Trim().ToUpperInvariant();
+          var u = dum[1].Trim().ToUpperInvariant();
+          var m = dum.Length > 3 ? dum[2].Trim().ToUpperInvariant() : "*";
+          var uenvs = Environments
+            .Where(x => x.Env.IsAuthorized(d, u, m, defAuth))
+            .Select(x => (d, u, m, x.Env, x.Root))
+          ;
+          envs.AddRange(uenvs);
+        }
 
         if (envs.Count == 0)
           return ExcelError.ExcelErrorNA;
 
-        var ans = new object[envs.Count, 3];
+        var ans = new object[envs.Count, 6];
         for (var i = 0; i < envs.Count; ++i) {
-          ans[i, 0] = envs[i].Env.Name;
-          ans[i, 1] = envs[i].Env.Group ?? String.Empty;
-          ans[i, 2] = envs[i].Root;
+          ans[i, 0] = envs[i].Domain;
+          ans[i, 1] = envs[i].User;
+          ans[i, 2] = envs[i].Machine;
+          ans[i, 3] = envs[i].Env.Name;
+          ans[i, 4] = envs[i].Env.Group ?? String.Empty;
+          ans[i, 5] = envs[i].Root;
         }
 
         return ans;
@@ -92,6 +128,9 @@ namespace XLauncher.Admin
         return Trigger;
 
       try {
+
+        if (Environments.Count == 0)
+          return "#ERROR: no loaded environments";
 
         var envs = Environments.Where(x => x.Env.Name.Equals(Name.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
 
