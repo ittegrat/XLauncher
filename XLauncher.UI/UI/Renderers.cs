@@ -238,15 +238,18 @@ namespace XLauncher.UI
       );
       OnValueChanged(tbox, TextBox.TextProperty, parent);
 
-      var sp = new StackPanel {
+      var gr = new Grid {
         Margin = new Thickness(0, 4, 0, 0),
-        Orientation = Orientation.Horizontal
       };
+      gr.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+      gr.ColumnDefinitions.Add(new ColumnDefinition { /*Width = GridLength.Auto*/ });
 
-      sp.Children.Add(tblock);
-      sp.Children.Add(tbox);
+      Grid.SetRow(tblock, 0); Grid.SetColumn(tblock, 0);
+      Grid.SetRow(tbox, 0); Grid.SetColumn(tbox, 1);
+      gr.Children.Add(tblock);
+      gr.Children.Add(tbox);
 
-      return sp;
+      return gr;
 
     }
 
