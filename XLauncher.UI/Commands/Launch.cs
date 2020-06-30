@@ -16,7 +16,7 @@ namespace XLauncher.UI
     static NLog.Logger uLogger = NLog.LogManager.GetLogger(USAGE_LOGGER);
 
     ICommand cmdLaunch;
-    public ICommand CmdLaunch { get { return cmdLaunch ?? (cmdLaunch = new Command(this, ExecLaunch, CanLaunch)); } }
+    public ICommand CmdLaunch { get { return cmdLaunch ?? (cmdLaunch = new Command(nameof(CmdLaunch), this, ExecLaunch, CanLaunch)); } }
     bool CanLaunch() {
 
       if (!File.Exists(Configuration.Instance.LocalSettings.ExcelPath)) {

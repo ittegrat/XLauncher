@@ -20,7 +20,7 @@ namespace XLauncher.UI
     ObservableCollection<GlobalAddin> globalAddins = Configuration.Instance.LocalSettings.GlobalAddins;
 
     ICommand cmdGaiAdd;
-    public ICommand CmdGaiAdd => cmdGaiAdd ?? (cmdGaiAdd = new Command(this, ExecGaiAdd));
+    public ICommand CmdGaiAdd => cmdGaiAdd ?? (cmdGaiAdd = new Command(nameof(CmdGaiAdd), this, ExecGaiAdd));
     void ExecGaiAdd() {
 
       var sai = (GlobalAddin)GAList.SelectedItem;
@@ -89,7 +89,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdGaiDelete;
-    public ICommand CmdGaiDelete => cmdGaiDelete ?? (cmdGaiDelete = new Command(this, ExecGaiDelete, () => GAList.SelectedIndex >= 0));
+    public ICommand CmdGaiDelete => cmdGaiDelete ?? (cmdGaiDelete = new Command(nameof(CmdGaiDelete), this, ExecGaiDelete, () => GAList.SelectedIndex >= 0));
     void ExecGaiDelete() {
 
       if (!(GAList.SelectedItem is GlobalAddin ai))
@@ -118,7 +118,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdGaiDisableAll;
-    public ICommand CmdGaiDisableAll => cmdGaiDisableAll ?? (cmdGaiDisableAll = new Command(this, ExecGaiDisableAll, () => globalAddins.Any(a => a.Active)));
+    public ICommand CmdGaiDisableAll => cmdGaiDisableAll ?? (cmdGaiDisableAll = new Command(nameof(CmdGaiDisableAll), this, ExecGaiDisableAll, () => globalAddins.Any(a => a.Active)));
     void ExecGaiDisableAll() {
       foreach (var ai in globalAddins)
         ai.Active = false;
@@ -126,7 +126,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdGaiEdit;
-    public ICommand CmdGaiEdit => cmdGaiEdit ?? (cmdGaiEdit = new Command(this, ExecGaiEdit, () => GAList.SelectedIndex >= 0));
+    public ICommand CmdGaiEdit => cmdGaiEdit ?? (cmdGaiEdit = new Command(nameof(CmdGaiEdit), this, ExecGaiEdit, () => GAList.SelectedIndex >= 0));
     void ExecGaiEdit() {
 
       if (!(GAList.SelectedItem is GlobalAddin sai))
@@ -196,7 +196,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdGaiEnableAll;
-    public ICommand CmdGaiEnableAll => cmdGaiEnableAll ?? (cmdGaiEnableAll = new Command(this, ExecGaiEnableAll, () => !globalAddins.All(a => a.Active)));
+    public ICommand CmdGaiEnableAll => cmdGaiEnableAll ?? (cmdGaiEnableAll = new Command(nameof(CmdGaiEnableAll), this, ExecGaiEnableAll, () => !globalAddins.All(a => a.Active)));
     void ExecGaiEnableAll() {
       foreach (var ai in globalAddins)
         ai.Active = true;
@@ -204,7 +204,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdGaiMoveDown;
-    public ICommand CmdGaiMoveDown => cmdGaiMoveDown ?? (cmdGaiMoveDown = new Command(this, ExecGaiMoveDown, CanExecGaiMoveDown));
+    public ICommand CmdGaiMoveDown => cmdGaiMoveDown ?? (cmdGaiMoveDown = new Command(nameof(CmdGaiMoveDown), this, ExecGaiMoveDown, CanExecGaiMoveDown));
     bool CanExecGaiMoveDown() {
       return (GAList.SelectedIndex >= 0) && (GAList.SelectedIndex < globalAddins.Count - 1);
     }
@@ -219,7 +219,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdGaiMoveUp;
-    public ICommand CmdGaiMoveUp => cmdGaiMoveUp ?? (cmdGaiMoveUp = new Command(this, ExecGaiMoveUp, CanExecGaiMoveUp));
+    public ICommand CmdGaiMoveUp => cmdGaiMoveUp ?? (cmdGaiMoveUp = new Command(nameof(CmdGaiMoveUp), this, ExecGaiMoveUp, CanExecGaiMoveUp));
     bool CanExecGaiMoveUp() {
       return (GAList.SelectedIndex > 0);
     }

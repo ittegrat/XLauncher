@@ -20,7 +20,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEvAdd;
-    public ICommand CmdEvAdd => cmdEvAdd ?? (cmdEvAdd = new Command(this, ExecEvAdd, IsLocalEnv));
+    public ICommand CmdEvAdd => cmdEvAdd ?? (cmdEvAdd = new Command(nameof(CmdEvAdd), this, ExecEvAdd, IsLocalEnv));
     void ExecEvAdd() {
 
       var sev = (EVar)EVarsList.SelectedItem;
@@ -64,7 +64,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEvDelete;
-    public ICommand CmdEvDelete => cmdEvDelete ?? (cmdEvDelete = new Command(this, ExecEvDelete, IsEVarSelected));
+    public ICommand CmdEvDelete => cmdEvDelete ?? (cmdEvDelete = new Command(nameof(CmdEvDelete), this, ExecEvDelete, IsEVarSelected));
     void ExecEvDelete() {
 
       if (!(EVarsList.SelectedItem is EVar ev))
@@ -87,7 +87,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEvEdit;
-    public ICommand CmdEvEdit => cmdEvEdit ?? (cmdEvEdit = new Command(this, ExecEvEdit, IsEVarSelected));
+    public ICommand CmdEvEdit => cmdEvEdit ?? (cmdEvEdit = new Command(nameof(CmdEvEdit), this, ExecEvEdit, IsEVarSelected));
     void ExecEvEdit() {
 
       if (!(EVarsList.SelectedItem is EVar sev))
@@ -138,7 +138,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEvMoveDown;
-    public ICommand CmdEvMoveDown => cmdEvMoveDown ?? (cmdEvMoveDown = new Command(this, ExecEvMoveDown, CanExecEvMoveDown));
+    public ICommand CmdEvMoveDown => cmdEvMoveDown ?? (cmdEvMoveDown = new Command(nameof(CmdEvMoveDown), this, ExecEvMoveDown, CanExecEvMoveDown));
     bool CanExecEvMoveDown() {
 
       if (!(EVarsList.SelectedItem is EVar ev))
@@ -164,7 +164,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEvMoveUp;
-    public ICommand CmdEvMoveUp => cmdEvMoveUp ?? (cmdEvMoveUp = new Command(this, ExecEvMoveUp, CanExecEvMoveUp));
+    public ICommand CmdEvMoveUp => cmdEvMoveUp ?? (cmdEvMoveUp = new Command(nameof(CmdEvMoveUp), this, ExecEvMoveUp, CanExecEvMoveUp));
     bool CanExecEvMoveUp() {
 
       if (!(EVarsList.SelectedItem is EVar ev))

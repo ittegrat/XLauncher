@@ -3,9 +3,15 @@ using System.Windows.Input;
 
 namespace XLauncher.UI
 {
+
+  using Common;
+
   public class Command : ICommand
   {
 
+    static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+    readonly string name;
     readonly MainView view;
     readonly Action execute;
     readonly Func<bool> canExecute;
@@ -15,20 +21,31 @@ namespace XLauncher.UI
       remove => view.CanExecuteChanged -= value;
     }
 
-    public Command(MainView view, Action execute)
-      : this(view, execute, () => true) { }
-
-    public Command(MainView view, Action execute, Func<bool> canExecute) {
+    public Command(string name, MainView view, Action execute)
+      : this(name, view, execute, () => true) { }
+    public Command(string name, MainView view, Action execute, Func<bool> canExecute) {
+      this.name = name.IfNull("Unnamed");
       this.view = view;
       this.execute = execute;
       this.canExecute = canExecute;
     }
 
     public bool CanExecute(object parameter) {
-      return canExecute();
+      try {
+        return canExecute();
+      }
+      catch (Exception ex) {
+        logger.Error(ex, $"{name} command");
+      }
+      return false;
     }
     public void Execute(object parameter) {
-      execute();
+      try {
+        execute();
+      }
+      catch (Exception ex) {
+        logger.Error(ex, $"{name} command");
+      }
     }
 
   }

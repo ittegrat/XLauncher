@@ -9,32 +9,32 @@ namespace XLauncher.UI
   {
 
     ICommand cmdClearLogs;
-    public ICommand CmdClearLogs { get { return cmdClearLogs ?? (cmdClearLogs = new Command(this, ExecClearLogs)); } }
+    public ICommand CmdClearLogs { get { return cmdClearLogs ?? (cmdClearLogs = new Command(nameof(CmdClearLogs), this, ExecClearLogs)); } }
     void ExecClearLogs() {
       App.Logs.Clear();
     }
 
     ICommand cmdOpenLogFolder;
-    public ICommand CmdOpenLogFolder { get { return cmdOpenLogFolder ?? (cmdOpenLogFolder = new Command(this, ExecOpenLogFolder)); } }
+    public ICommand CmdOpenLogFolder { get { return cmdOpenLogFolder ?? (cmdOpenLogFolder = new Command(nameof(CmdOpenLogFolder), this, ExecOpenLogFolder)); } }
     void ExecOpenLogFolder() {
       System.Diagnostics.Process.Start(Configuration.Instance.LocalTempFolder);
     }
 
     ICommand cmdResetLogLevel;
-    public ICommand CmdResetLogLevel { get { return cmdResetLogLevel ?? (cmdResetLogLevel = new Command(this, ExecResetLogLevel)); } }
+    public ICommand CmdResetLogLevel { get { return cmdResetLogLevel ?? (cmdResetLogLevel = new Command(nameof(CmdResetLogLevel), this, ExecResetLogLevel)); } }
     void ExecResetLogLevel() {
       LogManager.Configuration = LogManager.Configuration.Reload();
       LogManager.ReconfigExistingLoggers();
     }
 
     ICommand cmdSetDebugLogLevel;
-    public ICommand CmdSetDebugLogLevel { get { return cmdSetDebugLogLevel ?? (cmdSetDebugLogLevel = new Command(this, ExecSetDebugLogLevel)); } }
+    public ICommand CmdSetDebugLogLevel { get { return cmdSetDebugLogLevel ?? (cmdSetDebugLogLevel = new Command(nameof(CmdSetDebugLogLevel), this, ExecSetDebugLogLevel)); } }
     void ExecSetDebugLogLevel() {
       SetLogLevel(LogLevel.Debug);
     }
 
     ICommand cmdSetTraceLogLevel;
-    public ICommand CmdSetTraceLogLevel { get { return cmdSetTraceLogLevel ?? (cmdSetTraceLogLevel = new Command(this, ExecSetTraceLogLevel)); } }
+    public ICommand CmdSetTraceLogLevel { get { return cmdSetTraceLogLevel ?? (cmdSetTraceLogLevel = new Command(nameof(CmdSetTraceLogLevel), this, ExecSetTraceLogLevel)); } }
     void ExecSetTraceLogLevel() {
       SetLogLevel(LogLevel.Trace);
     }

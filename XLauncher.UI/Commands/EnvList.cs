@@ -20,7 +20,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEnvClone;
-    public ICommand CmdEnvClone => cmdEnvClone ?? (cmdEnvClone = new Command(this, ExecEnvClone));
+    public ICommand CmdEnvClone => cmdEnvClone ?? (cmdEnvClone = new Command(nameof(CmdEnvClone), this, ExecEnvClone));
     void ExecEnvClone() {
 
       if (!(EnvList.SelectedItem is Environment senv))
@@ -66,7 +66,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEnvDelete;
-    public ICommand CmdEnvDelete => cmdEnvDelete ?? (cmdEnvDelete = new Command(this, ExecEnvDelete, IsLocalEnv));
+    public ICommand CmdEnvDelete => cmdEnvDelete ?? (cmdEnvDelete = new Command(nameof(CmdEnvDelete), this, ExecEnvDelete, IsLocalEnv));
     void ExecEnvDelete() {
 
       if (!(EnvList.SelectedItem is Environment env))
@@ -89,23 +89,23 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEnvExport;
-    public ICommand CmdEnvExport => cmdEnvExport ?? (cmdEnvExport = new Command(this, ExecEnvExport, IsLocalEnv));
+    public ICommand CmdEnvExport => cmdEnvExport ?? (cmdEnvExport = new Command(nameof(CmdEnvExport), this, ExecEnvExport, IsLocalEnv));
     void ExecEnvExport() {
       NotYet();
     }
 
     ICommand cmdEnvImport;
-    public ICommand CmdEnvImport => cmdEnvImport ?? (cmdEnvImport = new Command(this, ExecEnvImport));
+    public ICommand CmdEnvImport => cmdEnvImport ?? (cmdEnvImport = new Command(nameof(CmdEnvImport), this, ExecEnvImport));
     void ExecEnvImport() { NotYet(); }
 
     ICommand cmdEnvReload;
-    public ICommand CmdEnvReload => cmdEnvReload ?? (cmdEnvReload = new Command(this, ExecEnvReload));
+    public ICommand CmdEnvReload => cmdEnvReload ?? (cmdEnvReload = new Command(nameof(CmdEnvReload), this, ExecEnvReload));
     void ExecEnvReload() {
       LoadEnvironments();
     }
 
     ICommand cmdEnvReset;
-    public ICommand CmdEnvReset => cmdEnvReset ?? (cmdEnvReset = new Command(this, ExecEnvReset, CanExecEnvReset));
+    public ICommand CmdEnvReset => cmdEnvReset ?? (cmdEnvReset = new Command(nameof(CmdEnvReset), this, ExecEnvReset, CanExecEnvReset));
     bool CanExecEnvReset() {
       if (!(EnvList.SelectedItem is Environment env))
         return false;
@@ -119,7 +119,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdEnvRename;
-    public ICommand CmdEnvRename => cmdEnvRename ?? (cmdEnvRename = new Command(this, ExecEnvRename, IsLocalEnv));
+    public ICommand CmdEnvRename => cmdEnvRename ?? (cmdEnvRename = new Command(nameof(CmdEnvRename), this, ExecEnvRename, IsLocalEnv));
     void ExecEnvRename() {
 
       if (!(EnvList.SelectedItem is Environment env))

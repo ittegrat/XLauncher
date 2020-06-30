@@ -7,6 +7,6 @@ using System.Reflection;
 [assembly: AssemblyTrademark("XLauncher")]
 
 // Common Product Version.
-[assembly: AssemblyVersion("0.6.0")]
-[assembly: AssemblyFileVersion("0.6.0")]
-[assembly: AssemblyInformationalVersion("0.6.0 DEV")]
+[assembly: AssemblyVersion("0.7.0")]
+[assembly: AssemblyFileVersion("0.7.0")]
+[assembly: AssemblyInformationalVersion("0.7.0 DEV")]

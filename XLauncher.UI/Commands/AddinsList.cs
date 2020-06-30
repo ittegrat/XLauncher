@@ -21,7 +21,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdAiAdd;
-    public ICommand CmdAiAdd => cmdAiAdd ?? (cmdAiAdd = new Command(this, ExecAiAdd, IsLocalEnv));
+    public ICommand CmdAiAdd => cmdAiAdd ?? (cmdAiAdd = new Command(nameof(CmdAiAdd), this, ExecAiAdd, IsLocalEnv));
     void ExecAiAdd() {
 
       var sai = (Addin)AddinsList.SelectedItem;
@@ -92,7 +92,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdAiDelete;
-    public ICommand CmdAiDelete => cmdAiDelete ?? (cmdAiDelete = new Command(this, ExecAiDelete, IsAddinSelected));
+    public ICommand CmdAiDelete => cmdAiDelete ?? (cmdAiDelete = new Command(nameof(CmdAiDelete), this, ExecAiDelete, IsAddinSelected));
     void ExecAiDelete() {
 
       if (!(AddinsList.SelectedItem is Addin ai))
@@ -115,7 +115,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdAiEdit;
-    public ICommand CmdAiEdit => cmdAiEdit ?? (cmdAiEdit = new Command(this, ExecAiEdit, IsAddinSelected));
+    public ICommand CmdAiEdit => cmdAiEdit ?? (cmdAiEdit = new Command(nameof(CmdAiEdit), this, ExecAiEdit, IsAddinSelected));
     void ExecAiEdit() {
 
       if (!(AddinsList.SelectedItem is Addin sai))
@@ -192,7 +192,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdAiMoveDown;
-    public ICommand CmdAiMoveDown => cmdAiMoveDown ?? (cmdAiMoveDown = new Command(this, ExecAiMoveDown, CanExecAiMoveDown));
+    public ICommand CmdAiMoveDown => cmdAiMoveDown ?? (cmdAiMoveDown = new Command(nameof(CmdAiMoveDown), this, ExecAiMoveDown, CanExecAiMoveDown));
     bool CanExecAiMoveDown() {
 
       if (!(AddinsList.SelectedItem is Addin ai))
@@ -218,7 +218,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdAiMoveUp;
-    public ICommand CmdAiMoveUp => cmdAiMoveUp ?? (cmdAiMoveUp = new Command(this, ExecAiMoveUp, CanExecAiMoveUp));
+    public ICommand CmdAiMoveUp => cmdAiMoveUp ?? (cmdAiMoveUp = new Command(nameof(CmdAiMoveUp), this, ExecAiMoveUp, CanExecAiMoveUp));
     bool CanExecAiMoveUp() {
 
       if (!(AddinsList.SelectedItem is Addin ai))
