@@ -16,7 +16,7 @@ namespace XLauncher.UI
     static NLog.Logger uLogger = NLog.LogManager.GetLogger(USAGE_LOGGER);
 
     ICommand cmdLaunch;
-    public ICommand CmdLaunch { get { return cmdLaunch ?? (cmdLaunch = new Command(nameof(CmdLaunch), this, ExecLaunch, CanLaunch)); } }
+    public ICommand CmdLaunch { get { return cmdLaunch ?? (cmdLaunch = new Command(nameof(CmdLaunch), this, () => ExecLaunch(false), CanLaunch)); } }
     bool CanLaunch() {
 
       if (!File.Exists(Configuration.Instance.LocalSettings.ExcelPath)) {
@@ -32,22 +32,46 @@ namespace XLauncher.UI
       return true;
 
     }
-    void ExecLaunch() {
+    void ExecLaunch(bool saveSessionOnly) {
 
       if (!(EnvList.SelectedItem is Environment env))
         return;
 
       env.Save();
 
-      if (!Directory.Exists(Configuration.Instance.LocalTempFolder))
-        Directory.CreateDirectory(Configuration.Instance.LocalTempFolder);
+      var fn = $"{Strings.XLSESSION_BASENAME}_{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.xml";
+      string sf;
 
-      var sf = Path.Combine(
-        Configuration.Instance.LocalTempFolder,
-        $"{Strings.XLSESSION_BASENAME}_{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.xml"
-      );
+      if (saveSessionOnly) {
+
+        var sfd = new Microsoft.Win32.SaveFileDialog {
+          DereferenceLinks = true,
+          FileName = fn,
+          Filter = "Session File (*.xml)|*.xml|All files (*.*)|*.*",
+          Title = "Save session file"
+        };
+
+        if (sfd.ShowDialog(this) == false)
+          return;
+
+        sf = sfd.FileName;
+
+      } else {
+
+        if (!Directory.Exists(Configuration.Instance.LocalTempFolder))
+          Directory.CreateDirectory(Configuration.Instance.LocalTempFolder);
+
+        sf = Path.Combine(
+          Configuration.Instance.LocalTempFolder,
+          fn
+        );
+
+      }
 
       env.SaveSession(sf);
+
+      if (saveSessionOnly)
+        return;
 
       var startInfo = new ProcessStartInfo {
         FileName = Configuration.Instance.LocalSettings.ExcelPath,

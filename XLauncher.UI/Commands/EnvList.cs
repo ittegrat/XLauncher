@@ -151,9 +151,14 @@ namespace XLauncher.UI
       if (ibox.ShowDialog() != true)
         return;
 
-      //env.Name = name;
       env.Rename(name);
 
+    }
+
+    ICommand cmdEnvSaveSession;
+    public ICommand CmdEnvSaveSession => cmdEnvSaveSession ?? (cmdEnvSaveSession = new Command(nameof(CmdEnvSaveSession), this, ExecEnvSaveSession));
+    void ExecEnvSaveSession() {
+      ExecLaunch(true);
     }
 
     static void NotYet() {

@@ -158,6 +158,7 @@
     <Resource Include="Resources\Rename.png" />
     <Resource Include="Resources\Reset.png" />
     <Resource Include="Resources\Rocket.png" />
+    <Resource Include="Resources\Session.png" />
     <Resource Include="Resources\Unchecked.png" />
     <Resource Include="Resources\UpArrow.png" />
   </ItemGroup>
