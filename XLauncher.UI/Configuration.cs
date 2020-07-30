@@ -44,6 +44,8 @@ namespace XLauncher.UI
     public AuthType DefaultAuth { get; }
     public string GroupNameLocal { get; }
     public string GroupNamePublic { get; }
+    public TimeSpan FlashSpan { get; }
+    public Color FlashColor { get; }
     public Brush RWColor { get; }
     public Brush X86Color { get; }
     public Brush X64Color { get; }
@@ -112,6 +114,8 @@ namespace XLauncher.UI
       DefaultAuth = (AuthType)Enum.Parse(typeof(AuthType), GetValue("ui.default.auth", "deny"), true);
       GroupNameLocal = GetValue("ui.groupname.local", "User");
       GroupNamePublic = GetValue("ui.groupname.public", "Public");
+      FlashSpan = TimeSpan.FromMilliseconds(GetValue("ui.flash.span", 750));
+      FlashColor = (Color)ColorConverter.ConvertFromString(GetValue("ui.color.flash", "#104080"));
       RWColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(GetValue("ui.color.rw", "#800000")));
       X86Color = new SolidColorBrush((Color)ColorConverter.ConvertFromString(GetValue("ui.color.x86", "#0000BB")));
       X64Color = new SolidColorBrush((Color)ColorConverter.ConvertFromString(GetValue("ui.color.x64", "#006000")));

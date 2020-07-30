@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace XLauncher.UI
 {
@@ -102,6 +101,21 @@ namespace XLauncher.UI
     public ICommand CmdEnvReload => cmdEnvReload ?? (cmdEnvReload = new Command(nameof(CmdEnvReload), this, ExecEnvReload));
     void ExecEnvReload() {
       LoadEnvironments();
+
+      if (!(EnvList.Background is SolidColorBrush scb))
+        return;
+
+      if (EnvList.Background.IsFrozen || EnvList.Background.IsSealed)
+        EnvList.Background = new SolidColorBrush(scb.Color);
+
+      var ca = new ColorAnimation(
+        Configuration.Instance.FlashColor,
+        scb.Color,
+        Configuration.Instance.FlashSpan
+      );
+
+      EnvList.Background.BeginAnimation(SolidColorBrush.ColorProperty, ca);
+
     }
 
     ICommand cmdEnvReset;
