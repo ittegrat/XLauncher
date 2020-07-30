@@ -1,3 +1,15 @@
+add .net version detection code to setup / xlauncher ==> log
+UI -> ControlsList -> revise spacing
+set title ??
+
+##  ChangeLog  ##
+  ### v0.7.0
+    - generate session
+    - animate reload
+    - tiny fixes
+  ### v0.6.0
+    - Admin functions
+    - tiny fixes
 
 ##  Documentation  ##
 

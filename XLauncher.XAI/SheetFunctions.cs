@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 
 using ExcelDna.Integration;
 
@@ -96,6 +97,11 @@ namespace XLauncher.XAI
 
       if (Trigger is ExcelError)
         return Trigger;
+
+      if (
+        Attribute.GetCustomAttribute(typeof(SheetFunctions).Assembly, typeof(AssemblyInformationalVersionAttribute))
+        is AssemblyInformationalVersionAttribute va
+      ) return va.InformationalVersion;
 
       return typeof(SheetFunctions).Assembly.GetName().Version.ToString();
 
