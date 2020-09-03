@@ -3,6 +3,8 @@ UI -> ControlsList -> revise spacing
 set title ??
 
 ##  ChangeLog  ##
+  ### v0.8.0
+    - setup improvements
   ### v0.7.0
     - generate session
     - animate reload
@@ -68,7 +70,7 @@ set title ??
 
 ##  UI Setup  ##
 
-  - Improve WaitShutdown (while loop + timeout)
+  // - ...
 
 
 ##  Entities  ##

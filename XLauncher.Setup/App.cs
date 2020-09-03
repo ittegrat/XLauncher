@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-
-using System.IO;
-using System.Threading;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Windows;
 
 namespace XLauncher.Setup
 {
@@ -18,7 +15,7 @@ namespace XLauncher.Setup
   public partial class App : Application
   {
 
-    enum ErrCode { ERR_OK = 0, ERR_SETUP, ERR_UPDATE, ERR_ARGS, ERR_ABORT }
+    enum ErrCode { ERR_OK = 0, ERR_SETUP, ERR_UPDATE, ERR_ABORT, ERR_ARGS, ERR_LOCK }
 
     static NLog.Logger uLogger = NLog.LogManager.GetLogger("UsageLogger");
     static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -36,7 +33,7 @@ namespace XLauncher.Setup
         if (e.Args[0] == Strings.UPDATER_ARGS) {
           ec = Update();
         } else {
-          logger.Info($"Unknown command line arguments: '{String.Join(" ", e.Args)}");
+          logger.Info($"Unknown command line arguments: '{String.Join(" ", e.Args)}'");
           ec = ErrCode.ERR_ARGS;
         }
 
@@ -44,7 +41,47 @@ namespace XLauncher.Setup
         ec = Setup(config.CleanInstall, config.QuietInstall);
       }
 
-      logger.Debug($"Error code is '{ec}'");
+      if (ec != ErrCode.ERR_OK) {
+
+        var xrunning = Process.GetProcessesByName("EXCEL").Count() > 0;
+
+        logger.Error($"Error code is '{ec}'");
+        if (xrunning)
+          logger.Warn("Excel is running.");
+
+        if (IsUpdater || (!config.QuietInstall)) {
+
+          var msg = new StringBuilder(IsUpdater ? "Update" : "Setup");
+          msg.Append($" failed with error '{ec}'.");
+          if (ec == ErrCode.ERR_LOCK && xrunning)
+            msg.Append("\nPlease close all your EXCEL instances and try again.");
+          msg.Append($"\nFor additional details, please check the logfile");
+
+          var target = NLog.LogManager.Configuration.ConfiguredNamedTargets
+            .Where(t => t.Name == "applog")
+            .FirstOrDefault()
+            as NLog.Targets.FileTarget
+          ;
+          if (target?.FileName is NLog.Layouts.SimpleLayout layout) {
+            msg.Append($":\n{layout.FixedText}");
+          } else {
+            msg.Append(".");
+          }
+
+          if (IsUpdater && ec == ErrCode.ERR_LOCK)
+            msg.Append($"\n\n{Strings.APP_NAME} will be available in a few seconds.");
+
+          MessageBox.Show(
+            msg.ToString(),
+            Strings.APP_NAME + " Setup",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error
+          );
+
+        }
+
+      }
+
       Shutdown((int)ec);
 
     }
@@ -104,6 +141,29 @@ namespace XLauncher.Setup
       return dlink;
 
     }
+    bool IsLocked(string fpath) {
+
+      try {
+
+        var finfo = new FileInfo(fpath);
+
+        try {
+          using (var fs = finfo.Open(FileMode.Open, FileAccess.Read, FileShare.None)) { fs.Close(); }
+        }
+        catch (IOException iex) {
+          logger.Debug(iex, "File Locked");
+          return true;
+        }
+
+      }
+      catch (Exception ex) {
+        logger.Debug(ex, "FileInfo error");
+      }
+
+      return false;
+
+    }
+
     ErrCode Setup(bool clean, bool quiet) {
 
       try {
@@ -155,17 +215,27 @@ namespace XLauncher.Setup
 
         }
 
-        if (exist && clean) {
-          logger.Debug("Cleaning existing installation.");
-          Directory.Delete(dst, true);
+        var files = Directory.GetFiles(src)
+          .ToDictionary(f => Path.Combine(dst, Path.GetFileName(f)))
+        ;
+
+        if (exist) {
+
+          if (files.Keys.Any(f => IsLocked(f)))
+            return ErrCode.ERR_LOCK;
+
+          if (clean) {
+            logger.Debug("Cleaning existing installation.");
+            Directory.Delete(dst, true);
+          }
+
         }
 
         Directory.CreateDirectory(dst);
 
-        foreach (var f in Directory.GetFiles(src)) {
-          var fn = Path.GetFileName(f);
-          logger.Debug($"Copying file '{fn}'.");
-          File.Copy(f, Path.Combine(dst, fn), true);
+        foreach (var f in files) {
+          logger.Debug($"Copying file '{Path.GetFileName(f.Value)}'.");
+          File.Copy(f.Value, f.Key, true);
         }
 
         var dlink = CreateShortcuts(quiet);
@@ -199,28 +269,50 @@ namespace XLauncher.Setup
 
           try {
 
+            var procs = Process.GetProcessesByName("XLAUNCHER");
+            if (procs.Length > 0) {
+              var fn = procs[0].MainModule.FileName;
+              config.InstallFolder = Path.GetDirectoryName(fn);
+            }
+
             if (ewh.Set()) {
 
               if (singleInstance.WaitOne(config.WaitTimeOut)) {
 
-                logger.Debug($"Sleeping {config.WaitShutdown}.");
-                Thread.Sleep(config.WaitShutdown);
+                var start = DateTime.Now;
+                while (true) {
 
-                if (Setup(false, true) != ErrCode.ERR_OK)
-                  throw new InvalidOperationException("Setup failure.");
+                  if (Process.GetProcessesByName("XLAUNCHER").Count() > 0) {
+                    Thread.Sleep(config.WaitSleep);
+                  } else {
+                    break;
+                  }
 
-                var startInfo = new ProcessStartInfo {
-                  FileName = Path.Combine(config.InstallFolder, config.AppFilename)
-                };
+                  if (DateTime.Now - start > config.WaitTimeOut)
+                    throw new InvalidOperationException("Wait timeout.");
 
-                ewh.Reset();
+                }
 
-                Process.Start(startInfo);
+                var ec = Setup(false, true);
 
-                ewh.WaitOne();
-                singleInstance.ReleaseMutex();
+                if (ec == ErrCode.ERR_OK || ec == ErrCode.ERR_LOCK) {
 
-                return ErrCode.ERR_OK;
+                  var startInfo = new ProcessStartInfo {
+                    FileName = Path.Combine(config.InstallFolder, config.AppFilename)
+                  };
+
+                  ewh.Reset();
+
+                  Process.Start(startInfo);
+
+                  ewh.WaitOne();
+                  singleInstance.ReleaseMutex();
+
+                  return ec;
+
+                }
+
+                throw new InvalidOperationException("Setup failure.");
 
               }
 

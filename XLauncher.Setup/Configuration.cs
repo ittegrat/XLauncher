@@ -25,13 +25,14 @@ namespace XLauncher.Setup
     public bool DesktopLink { get; }
     public bool QuietInstall { get; }
     public TimeSpan WaitTimeOut { get; }
-    public TimeSpan WaitShutdown { get; }
+    public TimeSpan WaitSleep { get; }
 
     public string AppFilename { get; }
     public string DistributionFolder { get; }
-    public string InstallFolder { get; }
     public string LinkDescription { get; }
     public string LinkFilename { get; }
+
+    public string InstallFolder { get; set; }
 
     string appPath = null;
     string AppPath => appPath ?? (appPath = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName));
@@ -44,8 +45,8 @@ namespace XLauncher.Setup
       CleanInstall = GetValue("setup.clean", true);
       DesktopLink = GetValue("link.desktop", true);
       QuietInstall = GetValue("setup.quiet", false);
-      WaitTimeOut = TimeSpan.FromSeconds(GetValue("setup.wait.timeout", 15));
-      WaitShutdown = TimeSpan.FromSeconds(GetValue("setup.wait.shutdown", 10));
+      WaitTimeOut = TimeSpan.FromSeconds(GetValue<double>("setup.wait.timeout", 15));
+      WaitSleep = TimeSpan.FromSeconds(GetValue<double>("setup.wait.shutdown", 1));
 
       AppFilename = GetValue("app.filename", $"{Strings.APP_NAME}.exe");
       LinkDescription = GetValue("link.description", $"Start {Strings.APP_NAME}");

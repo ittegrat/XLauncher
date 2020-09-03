@@ -86,7 +86,7 @@ namespace XLauncher.UI
 
             var startInfo = new ProcessStartInfo {
               FileName = updaterPath,
-              Arguments = Strings.UPDATER_ARGS,
+              Arguments = $"{Strings.UPDATER_ARGS} {Version}",
               WindowStyle = ProcessWindowStyle.Normal
             };
             using (var proc = Process.Start(startInfo)) {
@@ -175,6 +175,18 @@ namespace XLauncher.UI
           logger.Debug($"This version: {Version}");
           logger.Debug($"Other version: {other}");
           if (other > Version) {
+            if (
+              Process.GetProcessesByName("EXCEL").Count() > 0 &&
+              MessageBoxResult.OK != MessageBox.Show(
+                $"A new version of the {Strings.APP_NAME} is available.\n" +
+                "Please close all your EXCEL instances and press the OK button.",
+                Strings.APP_NAME,
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning
+            )) {
+              logger.Info($"Updating cancelled by the user.");
+              return false;
+            }
             logger.Info($"Updating to version '{other}'.");
             updaterPath = Path.Combine(root, config.SetupFilename);
             return true;
