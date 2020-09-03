@@ -12,6 +12,7 @@
         Icon="/Resources/Rocket.png"
         SizeToContent="WidthAndHeight"
         ResizeMode="CanMinimize"
+        Closing="OnClosing"
 >
   <StackPanel>
     <TabControl>

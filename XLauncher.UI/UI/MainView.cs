@@ -8,6 +8,7 @@ using System.Windows.Data;
 namespace XLauncher.UI
 {
 
+  using Common;
   using DataAdapters;
 
   public partial class MainView : Window
@@ -58,10 +59,18 @@ namespace XLauncher.UI
 
     }
 
+    void OnClosing(object sender, System.ComponentModel.CancelEventArgs e) {
+      Try(() => {
+        foreach (var env in Environments)
+          env.Save();
+      });
+    }
     void OnSelectEnvironment(object sender, SelectionChangedEventArgs e) {
 
-      foreach (var env in Environments)
-        env.Save();
+      Try(() => {
+        foreach (var env in Environments)
+          env.Save();
+      });
 
       CurrentEnvironment = (Environment)EnvList.SelectedItem;
 
@@ -114,6 +123,20 @@ namespace XLauncher.UI
             c.Width = double.NaN;
           }
         }
+      }
+    }
+    void Try(Action action) {
+      try {
+        action();
+      }
+      catch (Exception ex) {
+        logger.Error(ex, "Try failed");
+        MessageBox.Show(
+          ex.Message,
+          Strings.APP_NAME,
+          MessageBoxButton.OK,
+          MessageBoxImage.Warning
+        );
       }
     }
 
