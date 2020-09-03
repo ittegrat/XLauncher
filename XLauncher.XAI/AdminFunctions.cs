@@ -24,47 +24,62 @@ namespace XLauncher.XAI
     static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     static List<(string Root, Environment Env)> Environments = new List<(string, Environment)>();
 
-    public static object LoadEnvs(object[] Roots, object Trigger) {
+    public static object AllAuthorizedUsers(object Trigger) {
 
       if (Trigger is ExcelError)
         return Trigger;
 
       try {
 
-        var roots = Roots
-          .Where(o => !(o is ExcelEmpty))
-          .Cast<string>()
-          .Select(s => s.Trim())
-          .ToList()
-        ;
+        if (Environments.Count == 0)
+          return "#ERROR: no loaded environments";
 
-        if (roots.Count == 0)
-          return "#ERROR: empty roots";
+        var users = new HashSet<(string D, string U, string M)>();
 
-        var envs = roots.SelectMany(root => Environment.LoadMany(root).Select(e => (Root: root, Env: e))).ToList();
+        foreach (var env in Environments) {
 
-        Environments = envs;
+          foreach (var d in env.Env.AuthDB.Domains) {
 
-        if (envs.Count == 0)
+            if (d.All) {
+              users.Add((d.Key, "any", "any"));
+              continue;
+            }
+            foreach (var u in d.Users) {
+              if (u.All) {
+                users.Add((d.Key, u.Name, "any"));
+                continue;
+              }
+              foreach (var m in u.Machines)
+                users.Add((d.Key, u.Name, m.Name));
+            }
+
+          }
+
+        }
+
+        if (users.Count == 0)
           return ExcelError.ExcelErrorNA;
 
-        var ans = new object[envs.Count, 3];
-        for (var i = 0; i < envs.Count; ++i) {
-          ans[i, 0] = envs[i].Env.Name;
-          ans[i, 1] = envs[i].Env.Group ?? String.Empty;
-          ans[i, 2] = envs[i].Root;
+        var ans = new object[users.Count, 3];
+        var i = 0;
+
+        foreach (var user in users ) {
+          ans[i, 0] = user.D;
+          ans[i, 1] = user.U;
+          ans[i, 2] = user.M;
+          ++i;
         }
 
         return ans;
 
       }
       catch (Exception ex) {
-        logger.Error(ex, $"Cannot build parameter table");
+        logger.Error(ex, $"Cannot build table");
         return $"#ERROR: {ex.Message}";
       }
 
     }
-    public static object UserEnvs(object[] Users, string DefaultAuth, object Trigger) {
+    public static object AuthorizedEnvs(object[] Users, string DefaultAuth, object Trigger) {
 
       if (Trigger is ExcelError)
         return Trigger;
@@ -117,12 +132,12 @@ namespace XLauncher.XAI
 
       }
       catch (Exception ex) {
-        logger.Error(ex, $"Cannot build parameter table");
+        logger.Error(ex, $"Cannot build table");
         return $"#ERROR: {ex.Message}";
       }
 
     }
-    public static object EnvUsers(string Name, string Group, string Root, object Trigger) {
+    public static object AuthorizedUsers(string Name, string Group, string Root, object Trigger) {
 
       if (Trigger is ExcelError)
         return Trigger;
@@ -135,7 +150,10 @@ namespace XLauncher.XAI
         var envs = Environments.Where(x => x.Env.Name.Equals(Name.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (envs.Count > 1)
-          envs = envs.Where(x => x.Env.Group.Equals(Group.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+          envs = envs.Where(x => {
+            var grp = x.Env.Group ?? "";
+            return grp.Equals(Group.Trim(), StringComparison.OrdinalIgnoreCase);
+          }).ToList();
 
         if (envs.Count > 1)
           envs = envs.Where(x => x.Root.Equals(Root.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
@@ -176,7 +194,73 @@ namespace XLauncher.XAI
 
       }
       catch (Exception ex) {
-        logger.Error(ex, $"Cannot build parameter table");
+        logger.Error(ex, $"Cannot build table");
+        return $"#ERROR: {ex.Message}";
+      }
+
+    }
+    public static object EnvsLoaded(object Trigger) {
+
+      if (Trigger is ExcelError)
+        return Trigger;
+
+      try {
+
+        if (Environments.Count == 0)
+          return ExcelError.ExcelErrorNA;
+
+        var ans = new object[Environments.Count, 3];
+        for (var i = 0; i < Environments.Count; ++i) {
+          ans[i, 0] = Environments[i].Env.Name;
+          ans[i, 1] = Environments[i].Env.Group ?? String.Empty;
+          ans[i, 2] = Environments[i].Root;
+        }
+
+        return ans;
+
+      }
+      catch (Exception ex) {
+        logger.Error(ex, $"Cannot process loaded environments");
+        return $"#ERROR: {ex.Message}";
+      }
+
+    }
+    public static object LoadEnvironments(object[] Roots, object Trigger) {
+
+      if (Trigger is ExcelError)
+        return Trigger;
+
+      try {
+
+        var roots = Roots
+          .Where(o => !(o is ExcelEmpty))
+          .Cast<string>()
+          .Select(s => s.Trim())
+          .ToList()
+        ;
+
+        if (roots.Count == 0)
+          return "#ERROR: empty roots";
+
+        var envs = roots.SelectMany(root => Environment.LoadMany(root).Select(e => (Root: root, Env: e))).ToList();
+
+        Environments = envs;
+
+        if (envs.Count == 0)
+          return ExcelError.ExcelErrorNA;
+
+        var ans = new object[envs.Count, 3];
+        for (var i = 0; i < envs.Count; ++i) {
+          ans[i, 0] = envs[i].Env.Name;
+          ans[i, 1] = envs[i].Env.Group ?? String.Empty;
+          ans[i, 2] = envs[i].Root;
+        }
+
+        return ans;
+
+      }
+      catch (Exception ex) {
+        logger.Error(ex, $"Cannot load environments");
         return $"#ERROR: {ex.Message}";
       }
 

@@ -5,6 +5,7 @@ set title ??
 ##  ChangeLog  ##
   ### v0.8.0
     - setup improvements
+    - admin functions improvements
   ### v0.7.0
     - generate session
     - animate reload
