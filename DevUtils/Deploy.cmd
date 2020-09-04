@@ -47,7 +47,7 @@ for %%f in (
   copy /y %SRC%%%f %APP%
 )
 if %CFG%==Debug copy /y %SRC%XLauncher.XAI.dll %APP%
-if %CFG%==Debug copy /y %SRC%XLauncher.dna %APP%
+if %CFG%==Debug copy /y %SRC%XLauncher.dna %APP%XLauncher32.dna
 move %APP%XLauncher.xll %APP%XLauncher32.xll
 move %APP%XLauncher.xll.config %APP%XLauncher32.xll.config
 
