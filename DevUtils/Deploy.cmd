@@ -7,7 +7,7 @@ set CFG=Release
 ::call "C:\Program Files (x86)\Microsoft Visual Studio 15.0\Common7\Tools\VsDevCmd.bat"
 ::devenv ..\XLauncher.sln -build %CFG%
 
-set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio 15.0\MSBuild\15.0\Bin\MSBuild.exe"
+set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
 %MSBUILD% %~dp0..\XLauncher.sln -target:Rebuild "-p:Configuration=%CFG%;Platform=Any CPU"
 
 set BLD=%~dp0..\_build_\AnyCPU_%CFG%\

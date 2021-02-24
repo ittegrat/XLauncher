@@ -1,0 +1,15 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Remove_WpfTemp" AfterTargets="Build"
+    Condition="'$(UseWPF)' == 'true' or '@(Page)' != '' or '@(ApplicationDefinition)' != '' or '@(XamlPage)' != '' or '@(XamlAppDef)' != ''"
+  >
+    <ItemGroup>
+      <WpfTempFolders Include="$([System.IO.Directory]::GetDirectories('$(BuildRoot)','$(MSBuildProjectName)_*_wpftmp'))"/>
+    </ItemGroup>
+    <RemoveDir Directories="@(WpfTempFolders)">
+      <Output TaskParameter="RemovedDirectories" ItemName="WpfRemovedFolders" />
+    </RemoveDir>
+    <Message Condition="'@(WpfRemovedFolders)' != ''" Importance="high" Text="Wpftmp folders removed." />
+  </Target>
+
+</Project>
