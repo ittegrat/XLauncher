@@ -17,7 +17,12 @@
       <xs:field xpath="@name" />
     </xs:key>
     <xs:unique name="UAddin">
+      <xs:selector xpath="xe:addin" />
+      <xs:field xpath="@key" />
+    </xs:unique>
+    <xs:unique name="UXLL">
       <xs:selector xpath="xe:addin|xe:xll" />
+      <xs:field xpath="@arch" />
       <xs:field xpath="@key" />
     </xs:unique>
     <xs:key name="UControl">
