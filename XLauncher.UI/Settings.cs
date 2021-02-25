@@ -81,7 +81,7 @@ namespace XLauncher.UI
 
         string initialFolder = null;
 
-        if (String.IsNullOrWhiteSpace(ExcelPath)) {
+        if (String.IsNullOrWhiteSpace(ExcelPath) || !File.Exists(ExcelPath)) {
 
           var (is32bit, path) = DetectExcelVersion();
 
@@ -181,7 +181,7 @@ namespace XLauncher.UI
 
       }
 
-      var path = $@"{root}\Excel.exe";
+      var path = Path.Combine(root, "Excel.exe");
 
       if (File.Exists(path))
         return (is32, path);
