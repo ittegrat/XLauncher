@@ -85,7 +85,7 @@ namespace XLauncher.UI.DataAdapters
       }
     }
 
-    Environment(EE.Environment env, bool local) { this.environment = env; IsLocal = local; }
+    public Environment(EE.Environment env, bool local) { this.environment = env; IsLocal = local; }
 
     //++++++++++     API     ++++++++++
     public void Add(EVar ev, EVar after) {

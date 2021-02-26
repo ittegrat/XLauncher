@@ -8,6 +8,7 @@ namespace XLauncher.UI
 
   using Common;
   using DataAdapters;
+  using EE = Entities.Environments;
 
   public partial class MainView
   {
@@ -39,6 +40,36 @@ namespace XLauncher.UI
 
       env.Save();
 
+      Launch(env, saveSessionOnly);
+
+    }
+
+    ICommand cmdLaunchEmpty;
+    public ICommand CmdLaunchEmpty { get { return cmdLaunchEmpty ?? (cmdLaunchEmpty = new Command(nameof(CmdLaunchEmpty), this, ExecLaunchEmpty)); } }
+    void ExecLaunchEmpty() {
+
+      var fw = new EE.Framework {
+        Name = "Empty",
+        Boxes = new EE.Box[] {new EE.Box {
+          Text = "Empty",
+          Controls = new EE.Control[] { new EE.NameValuePair { Name="nullKey", Value="nullValue" } }
+        }}
+      };
+      fw.Validate();
+
+      var eenv = new EE.Environment {
+        Name = "Empty",
+        Frameworks = new EE.Framework[] { fw }
+      };
+      eenv.Validate();
+
+      var env = new Environment(eenv, true);
+      Launch(env, false);
+
+    }
+
+    void Launch(Environment env, bool saveSessionOnly) {
+
       var fn = $"{Strings.XLSESSION_BASENAME}_{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.xml";
       string sf;
 
@@ -48,6 +79,7 @@ namespace XLauncher.UI
           DereferenceLinks = true,
           FileName = fn,
           Filter = "Session File (*.xml)|*.xml|All files (*.*)|*.*",
+          InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments),
           Title = "Save session file"
         };
 
