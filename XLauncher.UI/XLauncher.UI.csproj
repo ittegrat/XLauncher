@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Add.png" />
+    <Resource Include="Resources\AddToClipboard.png" />
     <Resource Include="Resources\Checked.png" />
     <Resource Include="Resources\Clone.png" />
     <Resource Include="Resources\Delete.png" />

@@ -17,6 +17,9 @@ namespace XLauncher.UI
   {
 
     public bool IsAddinSelected() {
+      return (AddinsList.SelectedIndex >= 0);
+    }
+    public bool IsLocalAndAddinSelected() {
       return (IsLocalEnv() && (AddinsList.SelectedIndex >= 0));
     }
 
@@ -91,8 +94,16 @@ namespace XLauncher.UI
 
     }
 
+    ICommand cmdAiCopyPath;
+    public ICommand CmdAiCopyPath => cmdAiCopyPath ?? (cmdAiCopyPath = new Command(nameof(CmdAiCopyPath), this, ExecAiCopyPath, IsAddinSelected));
+    void ExecAiCopyPath() {
+      if (!(AddinsList.SelectedItem is Addin ai))
+        return;
+      Clipboard.SetText(ai.Path);
+    }
+
     ICommand cmdAiDelete;
-    public ICommand CmdAiDelete => cmdAiDelete ?? (cmdAiDelete = new Command(nameof(CmdAiDelete), this, ExecAiDelete, IsAddinSelected));
+    public ICommand CmdAiDelete => cmdAiDelete ?? (cmdAiDelete = new Command(nameof(CmdAiDelete), this, ExecAiDelete, IsLocalAndAddinSelected));
     void ExecAiDelete() {
 
       if (!(AddinsList.SelectedItem is Addin ai))
@@ -115,7 +126,7 @@ namespace XLauncher.UI
     }
 
     ICommand cmdAiEdit;
-    public ICommand CmdAiEdit => cmdAiEdit ?? (cmdAiEdit = new Command(nameof(CmdAiEdit), this, ExecAiEdit, IsAddinSelected));
+    public ICommand CmdAiEdit => cmdAiEdit ?? (cmdAiEdit = new Command(nameof(CmdAiEdit), this, ExecAiEdit, IsLocalAndAddinSelected));
     void ExecAiEdit() {
 
       if (!(AddinsList.SelectedItem is Addin sai))

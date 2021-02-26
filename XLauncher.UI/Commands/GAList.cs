@@ -88,6 +88,14 @@ namespace XLauncher.UI
 
     }
 
+    ICommand cmdGaiCopyPath;
+    public ICommand CmdGaiCopyPath => cmdGaiCopyPath ?? (cmdGaiCopyPath = new Command(nameof(CmdGaiCopyPath), this, ExecGaiCopyPath));
+    void ExecGaiCopyPath() {
+      if (!(GAList.SelectedItem is GlobalAddin ai))
+        return;
+      Clipboard.SetText(ai.Path);
+    }
+
     ICommand cmdGaiDelete;
     public ICommand CmdGaiDelete => cmdGaiDelete ?? (cmdGaiDelete = new Command(nameof(CmdGaiDelete), this, ExecGaiDelete, () => GAList.SelectedIndex >= 0));
     void ExecGaiDelete() {

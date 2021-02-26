@@ -177,6 +177,12 @@
                       <Image Source="/Resources/DownArrow.png"/>
                     </MenuItem.Icon>
                   </MenuItem>
+                  <Separator />
+                  <MenuItem Header="Copy path" Command="{Binding CmdGaiCopyPath}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/AddToClipboard.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
                 </ContextMenu>
               </ListBox.ContextMenu>
 
@@ -304,6 +310,12 @@
                     <MenuItem Header="Move down" Command="{Binding CmdAiMoveDown}">
                       <MenuItem.Icon>
                         <Image Source="/Resources/DownArrow.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Copy path" Command="{Binding CmdAiCopyPath}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/AddToClipboard.png"/>
                       </MenuItem.Icon>
                     </MenuItem>
                   </ContextMenu>
