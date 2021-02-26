@@ -1,8 +1,16 @@
-add .net version detection code to setup / xlauncher ==> log
+xll => func / cmd to set log level at runtime
+how to remove inherited elements ?
 UI -> ControlsList -> revise spacing
-set title ??
+title format (string) + yes / no title
+add .net version detection code to setup / xlauncher ==> log
 
 ##  ChangeLog  ##
+  ### v0.9.0
+    - Switch to .NET Framework 4.8
+    - A couple of new sheet functions
+    - 'Copy path' context menu items
+    - Launch empty session (ctrl+left click)
+    - tiny fixes & improvements
   ### v0.8.0
     - setup improvements
     - admin functions improvements

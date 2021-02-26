@@ -256,41 +256,6 @@ namespace XLauncher.Entities.Environments
 
       var session = new Session();
 
-      //var fws = new List<Entities.Session.Context>();
-      //foreach (var f in frameworks) {
-      //
-      //  var fw = new Entities.Session.Context();
-      //  fws.Add(fw);
-      //
-      //  fw.Name = f.Name;
-      //
-      //  var ais = new List<Entities.Session.Addin>();
-      //  foreach (var ai in f.Addins) {
-      //    var sai = new Entities.Session.Addin { Path = ai.Path, ReadOnly = ai.ReadOnly };
-      //    if (ai is XLL xll && xll.Arch != arch)
-      //      continue;
-      //    ais.Add(sai);
-      //  }
-      //  if (ais.Count > 0)
-      //    fw.Addins = ais.ToArray();
-      //
-      //  var pars = new List<Entities.Session.Param>();
-      //  foreach (var b in f.Boxes) {
-      //    foreach (var c in b.Controls) {
-      //
-      //      var p = c.ToParam();
-      //      if (p != null)
-      //        pars.Add(p);
-      //
-      //    }
-      //  }
-      //  if (pars.Count > 0)
-      //    fw.Params = pars.ToArray();
-      //
-      //}
-      //if (fws.Count > 0)
-      //  session.Frameworks = fws.ToArray();
-
       session.Contexts = frameworks
         .Select(f => f.ToContext(arch))
         .ToArray()

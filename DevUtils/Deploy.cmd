@@ -43,6 +43,8 @@ set SRC=%BLD%XLauncher.XAI\
 for %%f in (
   XLauncher.xll
   XLauncher.xll.config
+  XLauncher64.xll
+  XLauncher64.xll.config
 ) do (
   copy /y %SRC%%%f %APP%
 )
