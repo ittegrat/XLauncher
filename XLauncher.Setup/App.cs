@@ -147,12 +147,14 @@ namespace XLauncher.Setup
 
         var finfo = new FileInfo(fpath);
 
-        try {
-          using (var fs = finfo.Open(FileMode.Open, FileAccess.Read, FileShare.None)) { fs.Close(); }
-        }
-        catch (IOException iex) {
-          logger.Debug(iex, "File Locked");
-          return true;
+        if (finfo.Exists) {
+          try {
+            using (var fs = finfo.Open(FileMode.Open, FileAccess.Read, FileShare.None)) { fs.Close(); }
+          }
+          catch (IOException iex) {
+            logger.Debug(iex, "File Locked");
+            return true;
+          }
         }
 
       }
