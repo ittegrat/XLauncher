@@ -100,6 +100,7 @@ namespace XLauncher.UI
     ICommand cmdEnvReload;
     public ICommand CmdEnvReload => cmdEnvReload ?? (cmdEnvReload = new Command(nameof(CmdEnvReload), this, ExecEnvReload));
     void ExecEnvReload() {
+
       LoadEnvironments();
 
       if (!(EnvList.Background is SolidColorBrush scb))

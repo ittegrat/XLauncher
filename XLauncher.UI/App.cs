@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace XLauncher.UI
 {
@@ -28,11 +29,13 @@ namespace XLauncher.UI
     [return: MarshalAs(UnmanagedType.Bool)]
     static extern bool IsIconic(IntPtr handle);
 
-    static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    static readonly Configuration config = Configuration.Instance;
+    static readonly DispatcherTimer autoClose = new DispatcherTimer();
+    static readonly DispatcherTimer autoReload = new DispatcherTimer();
+
     static Mutex singleInstance;
     static string appPath = null;
-
-    Configuration config = Configuration.Instance;
 
     public static ObservableCollection<string> Logs { get; } = new ObservableCollection<string>();
 
@@ -75,7 +78,7 @@ namespace XLauncher.UI
 
         logger.Info("Single instance mutex acquired.");
 
-        if (check && NeedsUpdate(out string updaterPath)) {
+        if (check && NeedsUpdate(true, out string updaterPath)) {
 
           logger.Info("Starting update process.");
           logger.Debug($"Updater process is '{updaterPath}'.");
@@ -109,6 +112,11 @@ namespace XLauncher.UI
 
         logger.Info($"Cleaning temp folder '{config.LocalTempFolder}'.");
         DeleteTempFiles();
+
+        if (config.AutoReloadTime >= TimeSpan.Zero) {
+          autoReload.Tick += SetAutoReload;
+          SetAutoReload(autoReload, null);
+        }
 
         logger.Info("Starting the UI.");
 
@@ -158,9 +166,26 @@ namespace XLauncher.UI
       }
 
     }
-    bool NeedsUpdate(out string updaterPath) {
+    void GiveUp() {
+
+      logger.Info("Another instance detected. Begin shutting down.");
+
+      var proc = Process.GetCurrentProcess();
+      var other = Process.GetProcessesByName(proc.ProcessName).Where(p => p.Id != proc.Id).First();
+
+      var handle = other.MainWindowHandle;
+      if (IsIconic(handle)) {
+        ShowWindow(handle, SW_RESTORE);
+      }
+      SetForegroundWindow(handle);
+
+      Shutdown();
+
+    }
+    bool NeedsUpdate(bool interactive, out string updaterPath) {
 
       logger.Trace("Checking updates.");
+      logger.Trace($"Check is{(interactive ? String.Empty : " not")} interactive.");
 
       updaterPath = null;
 
@@ -176,6 +201,7 @@ namespace XLauncher.UI
           logger.Debug($"Other version: {other}");
           if (other > Version) {
             if (
+              interactive &&
               Process.GetProcessesByName("EXCEL").Count() > 0 &&
               MessageBoxResult.OK != MessageBox.Show(
                 $"A new version of the {Strings.APP_NAME} is available.\n" +
@@ -202,20 +228,48 @@ namespace XLauncher.UI
       return false;
 
     }
-    void GiveUp() {
-
-      logger.Info("Another instance detected. Begin shutting down.");
-
-      var proc = Process.GetCurrentProcess();
-      var other = Process.GetProcessesByName(proc.ProcessName).Where(p => p.Id != proc.Id).First();
-
-      var handle = other.MainWindowHandle;
-      if (IsIconic(handle)) {
-        ShowWindow(handle, SW_RESTORE);
+    void SetAutoReload(object sender, EventArgs ea) {
+      autoReload.Stop();
+      try {
+        if (autoReload.Tag != null) {
+          logger.Info("Starting daily maintenance.");
+          if (NeedsUpdate(false, out string _)) {
+            autoClose.Interval = NextInterval(config.AutoCloseTime);
+            logger.Info($"Setting AutoClose timer at '{DateTime.Now + autoClose.Interval}'.");
+            autoClose.Tick += (s, e) => {
+              logger.Info($"AutoClosing {Strings.APP_NAME}.");
+              MainWindow.Close();
+            };
+            autoClose.Start();
+            return;
+          }
+          var cmd = ((MainView)MainWindow).CmdEnvReload;
+          if (cmd.CanExecute(null)) {
+            cmd.Execute(null);
+            logger.Info("Environments reloaded.");
+          }
+        } else {
+          autoReload.Tag = new Object();
+        }
       }
-      SetForegroundWindow(handle);
+      catch (Exception ex) {
+        logger.Error(ex, "AutoReload EventHandler error");
+      }
+      autoReload.Interval = NextInterval(config.AutoReloadTime);
+      logger.Info($"Setting AutoReload timer at '{DateTime.Now + autoReload.Interval}'.");
+      autoReload.Start();
+    }
 
-      Shutdown();
+    TimeSpan NextInterval(TimeSpan time) {
+
+      var now = DateTime.Now;
+
+      var dt = now.Date;
+      if (now.TimeOfDay >= time)
+        dt = dt.AddDays(1);
+      dt += time;
+
+      return dt - now;
 
     }
 

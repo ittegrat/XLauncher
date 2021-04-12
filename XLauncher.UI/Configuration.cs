@@ -28,6 +28,9 @@ namespace XLauncher.UI
     public TimeSpan WaitTimeOut { get; }
     public IEnumerable<string> UpdateRoots { get; }
 
+    public TimeSpan AutoCloseTime { get; }
+    public TimeSpan AutoReloadTime { get; }
+
     public string LocalSettingsFolder { get; }
     public string LocalSettingsFilename { get; }
 
@@ -80,6 +83,9 @@ namespace XLauncher.UI
         .Where(s => s != null)
         .Distinct()
       ;
+
+      AutoReloadTime = GetTimerTime(GetValue("timer.autoreload", "-01:00"));
+      AutoCloseTime = GetTimerTime(GetValue("timer.autoclose", "00:00"));
 
       LocalSettingsFolder = App.GetRootedPath(GetValue("local.settings.folder", "Settings"));
       LocalSettingsFilename = Path.Combine(LocalSettingsFolder, GetValue("local.settings.filename", "Settings.xml"));
@@ -150,6 +156,16 @@ namespace XLauncher.UI
 
       return Path.GetFullPath(path);
 
+    }
+    TimeSpan GetTimerTime(string texpr) {
+      try {
+        var ss = texpr.Split(':');
+        return new TimeSpan(int.Parse(ss[0]), int.Parse(ss[1]), 0);
+      }
+      catch (Exception ex) {
+        logger.Error(ex, $"Can't parse time '{texpr}'");
+        return new TimeSpan(-1);
+      }
     }
     T GetValue<T>(string key, T @default) {
       return config.ContainsKey(key) ? (T)Convert.ChangeType(config[key], typeof(T)) : @default;

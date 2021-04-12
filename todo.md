@@ -1,3 +1,5 @@
+HKEY_CURRENT_USER/Software/Microsoft/Office/16.0/application_name/Security/Trusted Locations
+config => add / toggle trusted location in registry
 xll => func / cmd to set log level at runtime
 how to remove inherited elements ?
 UI -> ControlsList -> revise spacing
@@ -5,6 +7,8 @@ title format (string) + yes / no title
 add .net version detection code to setup / xlauncher ==> log
 
 ##  ChangeLog  ##
+  ### v0.10.0
+    - Add AutoReload and AutoClose timers
   ### v0.9.0
     - Switch to .NET Framework 4.8
     - A couple of new sheet functions
