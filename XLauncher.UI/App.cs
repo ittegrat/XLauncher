@@ -245,7 +245,7 @@ namespace XLauncher.UI
           }
           var cmd = ((MainView)MainWindow).CmdEnvReload;
           if (cmd.CanExecute(null)) {
-            cmd.Execute(null);
+            cmd.Execute(new Object());
             logger.Info("Environments reloaded.");
           }
         } else {

@@ -1,4 +1,5 @@
 using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace XLauncher.UI
@@ -45,6 +46,8 @@ namespace XLauncher.UI
       }
       catch (Exception ex) {
         logger.Error(ex, $"{name} command");
+        if (parameter == null)
+          MessageBox.Show(ex.Message, Strings.APP_NAME, MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }
 

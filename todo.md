@@ -11,6 +11,7 @@ add .net version detection code to setup / xlauncher ==> log
     - Add AutoReload and AutoClose timers
     - Delete empty frameworks in local environments
     - Allow environments with only EVars
+    - Display a MessageBox when a Command throws
   ### v0.9.0
     - Switch to .NET Framework 4.8
     - A couple of new sheet functions
