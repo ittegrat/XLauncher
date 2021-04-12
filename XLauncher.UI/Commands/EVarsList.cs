@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -70,17 +67,25 @@ namespace XLauncher.UI
       if (!(EVarsList.SelectedItem is EVar ev))
         return;
 
+      var last = CurrentEnvironment.ItemsCount(ev.Framework) < 2;
+
       if (Configuration.Instance.LocalSettings.ConfirmDelete) {
-        if (MessageBoxResult.Yes != MessageBox.Show(
-          $"Are you sure you want to delete variable '{ev.Name}'?.",
-          Strings.APP_NAME,
-          MessageBoxButton.YesNo,
-          MessageBoxImage.Warning
-        )) return;
+        string msg;
+        if (last) {
+          msg = $"As the variable '{ev.Name}' is the last element of the framework '{ev.Framework}'," +
+                $" the entire framework will be deleted. Continue?";
+        } else {
+          msg = $"Are you sure you want to delete variable '{ev.Name}'?";
+        }
+        if (MessageBoxResult.Yes != MessageBox.Show(msg, Strings.APP_NAME, MessageBoxButton.YesNo, MessageBoxImage.Warning))
+          return;
       }
 
       var idx = EVarsList.SelectedIndex;
-      CurrentEnvironment.Remove(ev);
+      if (last)
+        CurrentEnvironment.Remove(ev.Framework);
+      else
+        CurrentEnvironment.Remove(ev);
       CurrentEnvironment.Render(EVars);
       EVarsList.SelectedIndex = Math.Min(idx, EVars.Count - 1); ;
 

@@ -9,6 +9,7 @@ add .net version detection code to setup / xlauncher ==> log
 ##  ChangeLog  ##
   ### v0.10.0
     - Add AutoReload and AutoClose timers
+    - Delete empty frameworks in local environments
   ### v0.9.0
     - Switch to .NET Framework 4.8
     - A couple of new sheet functions

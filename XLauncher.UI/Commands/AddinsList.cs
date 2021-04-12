@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -109,17 +107,25 @@ namespace XLauncher.UI
       if (!(AddinsList.SelectedItem is Addin ai))
         return;
 
+      var last = CurrentEnvironment.ItemsCount(ai.Framework) < 2;
+
       if (Configuration.Instance.LocalSettings.ConfirmDelete) {
-        if (MessageBoxResult.Yes != MessageBox.Show(
-          $"Are you sure you want to delete addin '{Path.GetFileName(ai.Path)}' (Arch: {ai.Arch})?.",
-          Strings.APP_NAME,
-          MessageBoxButton.YesNo,
-          MessageBoxImage.Warning
-        )) return;
+        string msg;
+        if (last) {
+          msg = $"As the addin '{Path.GetFileName(ai.Path)}' (Arch: {ai.Arch}) is the last element of" +
+                $" the framework '{ai.Framework}', the entire framework will be deleted. Continue?";
+        } else {
+          msg = $"Are you sure you want to delete addin '{Path.GetFileName(ai.Path)}' (Arch: {ai.Arch})?";
+        }
+        if (MessageBoxResult.Yes != MessageBox.Show(msg, Strings.APP_NAME, MessageBoxButton.YesNo, MessageBoxImage.Warning))
+          return;
       }
 
       var idx = AddinsList.SelectedIndex;
-      CurrentEnvironment.Remove(ai);
+      if (last)
+        CurrentEnvironment.Remove(ai.Framework);
+      else
+        CurrentEnvironment.Remove(ai);
       CurrentEnvironment.Render(Addins);
       AddinsList.SelectedIndex = Math.Min(idx, Addins.Count - 1);
 

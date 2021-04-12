@@ -14,6 +14,8 @@ namespace XLauncher.Entities.Environments
 
     static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+    public int ItemsCount => EVars.Length + Addins.Length + Boxes.Length;
+
     public static Framework Load(string path) {
       try {
 
@@ -186,7 +188,7 @@ namespace XLauncher.Entities.Environments
       if (Boxes == null)
         Boxes = Array.Empty<Box>();
 
-      if (EVars.Length + Addins.Length + Boxes.Length == 0)
+      if (ItemsCount == 0)
         throw new ValidationException($"Invalid Framework '{Name}'. At least one of 'evar', 'addin', 'xll' or 'box' is required.");
 
       try {

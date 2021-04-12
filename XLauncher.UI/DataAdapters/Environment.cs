@@ -160,6 +160,13 @@ namespace XLauncher.UI.DataAdapters
       }
     }
 
+    public int ItemsCount(string fwName) {
+      return environment.Frameworks.First(f => f.Name == fwName).ItemsCount;
+    }
+    public void Remove(string fwName) {
+      environment.Frameworks = Array.FindAll(environment.Frameworks, f => f.Name != fwName);
+    }
+
     public void Render(UIElementCollection Controls, ICollection<Addin> addins, ICollection<EVar> evars) {
       Render(Controls);
       Render(addins);

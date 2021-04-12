@@ -235,8 +235,12 @@ namespace XLauncher.Entities.Environments
 
       logger.Trace($"Saving Environment '{Name}'.");
 
-      if (!overwrite && Directory.Exists(path))
-        throw new Exception($"Folder '{path}' already exist.");
+      if (Directory.Exists(path)) {
+        if (overwrite)
+          Directory.Delete(path, true);
+        else
+          throw new Exception($"Folder '{path}' already exist.");
+      }
 
       Directory.CreateDirectory(path);
 

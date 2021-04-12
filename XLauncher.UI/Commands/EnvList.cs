@@ -73,7 +73,7 @@ namespace XLauncher.UI
 
       if (Configuration.Instance.LocalSettings.ConfirmDelete) {
         if (MessageBoxResult.Yes != MessageBox.Show(
-          $"Are you sure you want to delete environment '{env.Name}'?.",
+          $"Are you sure you want to delete environment '{env.Name}'?",
           Strings.APP_NAME,
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
