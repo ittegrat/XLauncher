@@ -227,15 +227,19 @@ namespace XLauncher.UI.DataAdapters
       Dirty = false;
 
     }
-    public void SaveSession(string path) {
+    public void SaveSession(string path, bool fixEmpty) {
 
       var session = environment.ToSession(Configuration.Instance.LocalSettings.ExcelArch);
+      if (fixEmpty)
+        session.FixEmpty();
+
       session.Addins = Configuration.Instance.LocalSettings.GlobalAddins
         .Where(a => a.Active)
         .Select(a => new ES.Addin { Path = a.Path, ReadOnly = a.ReadOnly })
         .ToArray()
       ;
       session.LoadGlobalsFirst = Configuration.Instance.LocalSettings.LoadGlobalsFirst;
+
       session.Title = Id;
 
       session.Save(path);

@@ -9,6 +9,10 @@ namespace XLauncher.Entities.Session
   public partial class Context : IValidable
   {
 
+    public void FixEmpty() {
+      if (Addins.Length + Params.Length == 0)
+        Params = new Param[] { new Param { Name = "nullKey", Value = "nullValue", Type = ParamType.String } };
+    }
     public void Validate() {
 
       if (String.IsNullOrWhiteSpace(Name))

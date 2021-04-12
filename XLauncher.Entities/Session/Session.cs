@@ -30,6 +30,10 @@ namespace XLauncher.Entities.Session
       }
     }
 
+    public void FixEmpty() {
+      foreach (var ct in Contexts)
+        ct.FixEmpty();
+    }
     public void Save(string path) {
       logger.Trace($"Saving Session '{path}'.");
       Validate();

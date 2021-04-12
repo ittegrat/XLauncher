@@ -100,7 +100,7 @@ namespace XLauncher.UI
 
       }
 
-      env.SaveSession(sf);
+      env.SaveSession(sf, !saveSessionOnly);
 
       if (saveSessionOnly)
         return;
