@@ -65,7 +65,6 @@ namespace XLauncher.XAI
           continue;
         }
 
-        logger.Debug($"Loading '{ai.Path}'");
         XlCall.Excel(XlCall.xlcMessage, true, $"Loading {Path.GetFileName(ai.Path)}...");
 
         if (Path.GetExtension(ai.Path).Trim().ToUpperInvariant() == ".XLL")
@@ -80,6 +79,7 @@ namespace XLauncher.XAI
     }
     void LoadXLL(string path) {
       try {
+        logger.Debug($"RegisterXLL '{path}'");
         Directory.SetCurrentDirectory(Path.GetDirectoryName(path));
         var ans = ExcelIntegration.RegisterXLL(path);
       }
@@ -90,6 +90,7 @@ namespace XLauncher.XAI
     void CApiLoadAddin(string path, bool ro) {
       try {
 
+        logger.Debug($"XlCall.xlcOpen '{path}'");
         XlCall.Excel(XlCall.xlcOpen,
           path,          // file_text
           3,             // (int)update_links
@@ -115,6 +116,7 @@ namespace XLauncher.XAI
     void ComLoadAddin(string path, bool ro) {
       try {
 
+        logger.Debug($"Workbooks.Open '{path}'");
         ((dynamic)ExcelDnaUtil.Application).Workbooks.Open(
           path,          // Filename
           3,             // (int)UpdateLinks (3 --> External references will be updated)
