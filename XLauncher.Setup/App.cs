@@ -21,14 +21,19 @@ namespace XLauncher.Setup
     static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     static Mutex singleInstance;
 
-    Configuration config = Configuration.Instance;
+    readonly Configuration config = Configuration.Instance;
+
     bool IsUpdater = false;
 
     void OnStartup(object sender, StartupEventArgs e) {
 
+      logger.Info($"Current version: {typeof(App).Assembly.GetName().Version}");
+
       ErrCode ec;
 
       if (e.Args.Length > 0) {
+
+        logger.Debug($"Command line arguments: '{String.Join(" ", e.Args)}'");
 
         if (e.Args[0] == Strings.UPDATER_ARGS) {
           ec = Update();
@@ -82,6 +87,7 @@ namespace XLauncher.Setup
 
       }
 
+      logger.Info("Exiting XLauncher.Setup");
       Shutdown((int)ec);
 
     }
@@ -93,6 +99,7 @@ namespace XLauncher.Setup
         throw new ArgumentException($"The target file '{target}' does not exist.");
 
       void CreateShortcut(string linkPath) {
+        logger.Debug($"Creating shortcut '{linkPath}'.");
         using (var sl = new ShellLinkObject(linkPath)) {
           sl.TargetPath = target;
           sl.Description = config.LinkDescription;
@@ -168,12 +175,15 @@ namespace XLauncher.Setup
 
     ErrCode Setup(bool clean, bool quiet) {
 
+      logger.Info($"Operation mode is: '{(IsUpdater ? "Update" : "Setup")}'.");
+
       try {
 
         if (!IsUpdater) {
           singleInstance = new Mutex(true, Strings.MTX_APPLICATION, out bool granted);
           if (!granted)
             throw new WaitHandleCannotBeOpenedException("Single instance mutex cannot be acquired.");
+          logger.Info("Single instance mutex acquired.");
         }
 
         var src = config.DistributionFolder;
@@ -227,7 +237,7 @@ namespace XLauncher.Setup
             return ErrCode.ERR_LOCK;
 
           if (clean) {
-            logger.Debug("Cleaning existing installation.");
+            logger.Info("Cleaning existing installation.");
             Directory.Delete(dst, true);
           }
 
@@ -239,8 +249,10 @@ namespace XLauncher.Setup
           logger.Debug($"Copying file '{Path.GetFileName(f.Value)}'.");
           File.Copy(f.Value, f.Key, true);
         }
+        logger.Info("Files copied.");
 
         var dlink = CreateShortcuts(quiet);
+        logger.Info("Shortcuts created.");
 
         uLogger.Info("{type}{version}{clean}{quiet}{dlink}{dst}",
           IsUpdater ? "Update" : "Setup",
@@ -257,6 +269,7 @@ namespace XLauncher.Setup
         return ErrCode.ERR_SETUP;
       }
 
+      logger.Info($"{(IsUpdater ? "Update" : "Setup")} successful.");
       return ErrCode.ERR_OK;
 
     }
@@ -273,13 +286,18 @@ namespace XLauncher.Setup
 
             var procs = Process.GetProcessesByName("XLAUNCHER");
             if (procs.Length > 0) {
+              logger.Debug("Resolve installation folder.");
               var fn = procs[0].MainModule.FileName;
               config.InstallFolder = Path.GetDirectoryName(fn);
             }
 
             if (ewh.Set()) {
 
+              logger.Debug("Updater EventWaitHandle signaled.");
+
               if (singleInstance.WaitOne(config.WaitTimeOut)) {
+
+                logger.Info("Single instance mutex acquired.");
 
                 var start = DateTime.Now;
                 while (true) {
@@ -287,15 +305,19 @@ namespace XLauncher.Setup
                   if (Process.GetProcessesByName("XLAUNCHER").Count() > 0) {
                     Thread.Sleep(config.WaitSleep);
                   } else {
+                    logger.Debug($"XLauncher shutdown wait time: {(DateTime.Now - start).TotalSeconds} s.");
                     break;
                   }
 
-                  if (DateTime.Now - start > config.WaitTimeOut)
+                  if (DateTime.Now - start > config.WaitTimeOut) {
+                    logger.Debug($"Wait timeout after {(DateTime.Now - start).TotalSeconds} s.");
                     throw new InvalidOperationException("Wait timeout.");
+                  }
 
                 }
 
                 var ec = Setup(false, true);
+                logger.Debug($"Setup error code is '{ec}'");
 
                 if (ec == ErrCode.ERR_OK || ec == ErrCode.ERR_LOCK) {
 
@@ -305,10 +327,12 @@ namespace XLauncher.Setup
 
                   ewh.Reset();
 
+                  logger.Info($"Starting process '{startInfo.FileName}'.");
                   Process.Start(startInfo);
 
                   ewh.WaitOne();
                   singleInstance.ReleaseMutex();
+                  logger.Debug("Single instance mutex released.");
 
                   return ec;
 

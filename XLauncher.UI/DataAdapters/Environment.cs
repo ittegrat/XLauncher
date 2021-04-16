@@ -39,7 +39,8 @@ namespace XLauncher.UI.DataAdapters
     public static void Fill(ICollection<Environment> environments) {
       try {
 
-        logger.Trace($@"User is: {App.Domain}\{App.User}@{App.Machine}");
+        logger.Debug($@"User is: {App.Domain}\{App.User}@{App.Machine}");
+        logger.Trace($"Filling environments.");
 
         var envs = Configuration.Instance.PublicRoots
           .SelectMany(root => EE.Environment.LoadMany(root))
@@ -78,6 +79,8 @@ namespace XLauncher.UI.DataAdapters
           }
 
         }
+
+        logger.Trace($"Environments filled.");
 
       }
       catch (Exception ex) {
