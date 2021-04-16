@@ -99,8 +99,10 @@ namespace XLauncher.UI
                 throw new WaitHandleCannotBeOpenedException("Updater process not responding.");
 
               singleInstance.ReleaseMutex();
+              logger.Debug("Single instance mutex released.");
 
               Shutdown();
+              return;
 
             }
           }
