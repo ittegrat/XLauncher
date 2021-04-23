@@ -33,6 +33,7 @@ namespace XLauncher.UI
     static readonly Configuration config = Configuration.Instance;
     static readonly DispatcherTimer autoClose = new DispatcherTimer();
     static readonly DispatcherTimer autoReload = new DispatcherTimer();
+    static readonly Random rnd = new Random();
 
     static Mutex singleInstance;
     static string appPath = null;
@@ -65,7 +66,9 @@ namespace XLauncher.UI
         if (!granted) {
 
           if (EventWaitHandle.TryOpenExisting(Strings.MTX_UPDATER, out var ewh)) {
+            logger.Info("Restarted after update.");
             ewh.Set();
+            logger.Debug("Updater EventWaitHandle signaled.");
             if (!singleInstance.WaitOne(config.WaitTimeOut))
               throw new WaitHandleCannotBeOpenedException("Single instance mutex cannot be acquired.");
             check = false;
@@ -78,38 +81,11 @@ namespace XLauncher.UI
 
         logger.Info("Single instance mutex acquired.");
 
-        if (check && NeedsUpdate(true, out string updaterPath)) {
-
-          logger.Info("Starting update process.");
-          logger.Debug($"Updater process is '{updaterPath}'.");
-
-          try {
-
-            var ewh = new EventWaitHandle(false, EventResetMode.ManualReset, Strings.MTX_UPDATER);
-
-            var startInfo = new ProcessStartInfo {
-              FileName = updaterPath,
-              Arguments = $"{Strings.UPDATER_ARGS} {Version}",
-              WindowStyle = ProcessWindowStyle.Normal
-            };
-            using (var proc = Process.Start(startInfo)) {
-
-              // Wait for setup process to initialize.
-              if (!ewh.WaitOne(config.WaitTimeOut))
-                throw new WaitHandleCannotBeOpenedException("Updater process not responding.");
-
-              singleInstance.ReleaseMutex();
-              logger.Debug("Single instance mutex released.");
-
-              Shutdown();
-              return;
-
-            }
+        if (check && NeedsUpdate(out string updaterPath)) {
+          if (StartUpdate(updaterPath)) {
+            logger.Debug("Updater process started.");
+            return;
           }
-          catch (Exception ex) {
-            logger.Error(ex, "Updater process failed");
-          }
-
         }
 
         logger.Info($"Cleaning temp folder '{config.LocalTempFolder}'.");
@@ -135,8 +111,44 @@ namespace XLauncher.UI
       }
     }
     void OnExit(object sender, ExitEventArgs e) {
+      logger.Debug("Saving settings.");
       config.SaveSettings();
+      logger.Debug("Exiting application.");
       NLog.LogManager.Shutdown();
+    }
+
+    void SetAutoReload(object sender, EventArgs ea) {
+      autoReload.Stop();
+      try {
+        if (autoReload.Tag != null) {
+          logger.Info("Starting daily maintenance.");
+          if (NeedsUpdate(out string _)) {
+            autoClose.Interval = NextInterval(config.AutoCloseTime);
+            logger.Info($"Setting AutoClose timer at '{DateTime.Now + autoClose.Interval}'.");
+            autoClose.Tick += (s, e) => {
+              logger.Info($"AutoClosing {Strings.APP_NAME}.");
+              MainWindow.Close();
+            };
+            autoClose.Start();
+            return;
+          }
+          var cmd = ((MainView)MainWindow).CmdEnvReload;
+          if (cmd.CanExecute(null)) {
+            cmd.Execute(new Object());
+            logger.Info("Environments reloaded.");
+          }
+        } else {
+          autoReload.Tag = new Object();
+        }
+      }
+      catch (Exception ex) {
+        logger.Error(ex, "AutoReload EventHandler error");
+      }
+      var ts = NextInterval(config.AutoReloadTime);
+      ts -= TimeSpan.FromSeconds(10 * 60 * rnd.NextDouble());
+      autoReload.Interval = ts;
+      logger.Info($"Setting AutoReload timer at '{DateTime.Now + autoReload.Interval}'.");
+      autoReload.Start();
     }
 
     void DeleteTempFiles() {
@@ -184,10 +196,9 @@ namespace XLauncher.UI
       Shutdown();
 
     }
-    bool NeedsUpdate(bool interactive, out string updaterPath) {
+    bool NeedsUpdate(out string updaterPath) {
 
       logger.Trace("Checking updates.");
-      logger.Trace($"Check is{(interactive ? String.Empty : " not")} interactive.");
 
       updaterPath = null;
 
@@ -202,19 +213,6 @@ namespace XLauncher.UI
           logger.Debug($"This version: {Version}");
           logger.Debug($"Other version: {other}");
           if (other > Version) {
-            if (
-              interactive &&
-              Process.GetProcessesByName("EXCEL").Count() > 0 &&
-              MessageBoxResult.OK != MessageBox.Show(
-                $"A new version of the {Strings.APP_NAME} is available.\n" +
-                "Please close all your EXCEL instances and press the OK button.",
-                Strings.APP_NAME,
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Warning
-            )) {
-              logger.Info($"Updating cancelled by the user.");
-              return false;
-            }
             logger.Info($"Updating to version '{other}'.");
             updaterPath = Path.Combine(root, config.SetupFilename);
             return true;
@@ -230,38 +228,6 @@ namespace XLauncher.UI
       return false;
 
     }
-    void SetAutoReload(object sender, EventArgs ea) {
-      autoReload.Stop();
-      try {
-        if (autoReload.Tag != null) {
-          logger.Info("Starting daily maintenance.");
-          if (NeedsUpdate(false, out string _)) {
-            autoClose.Interval = NextInterval(config.AutoCloseTime);
-            logger.Info($"Setting AutoClose timer at '{DateTime.Now + autoClose.Interval}'.");
-            autoClose.Tick += (s, e) => {
-              logger.Info($"AutoClosing {Strings.APP_NAME}.");
-              MainWindow.Close();
-            };
-            autoClose.Start();
-            return;
-          }
-          var cmd = ((MainView)MainWindow).CmdEnvReload;
-          if (cmd.CanExecute(null)) {
-            cmd.Execute(new Object());
-            logger.Info("Environments reloaded.");
-          }
-        } else {
-          autoReload.Tag = new Object();
-        }
-      }
-      catch (Exception ex) {
-        logger.Error(ex, "AutoReload EventHandler error");
-      }
-      autoReload.Interval = NextInterval(config.AutoReloadTime);
-      logger.Info($"Setting AutoReload timer at '{DateTime.Now + autoReload.Interval}'.");
-      autoReload.Start();
-    }
-
     TimeSpan NextInterval(TimeSpan time) {
 
       var now = DateTime.Now;
@@ -272,6 +238,68 @@ namespace XLauncher.UI
       dt += time;
 
       return dt - now;
+
+    }
+    bool StartUpdate(string updaterPath) {
+
+      if (
+        Process.GetProcessesByName("EXCEL").Count() > 0 &&
+        MessageBoxResult.OK != MessageBox.Show(
+          $"A new version of the {Strings.APP_NAME} is available.\n" +
+          "Please close all your EXCEL instances and press the OK button to start" +
+          " the update, or press the Cancel button to postpone it to the next time.",
+          Strings.APP_NAME,
+          MessageBoxButton.OKCancel,
+          MessageBoxImage.Information
+      )) {
+        logger.Info($"Update cancelled by the user.");
+        return false;
+      }
+
+      if (
+        Process.GetProcessesByName("EXCEL").Count() > 0 &&
+        MessageBoxResult.OK != MessageBox.Show(
+          $"There are still EXCEL processes running.\n" +
+          "Are you sure you want to continue?",
+          Strings.APP_NAME,
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+      )) {
+        logger.Info($"Update cancelled by the user after Excel warning.");
+        return false;
+      }
+
+      logger.Info("Starting update process.");
+      logger.Debug($"Updater process is '{updaterPath}'.");
+
+      try {
+
+        var ewh = new EventWaitHandle(false, EventResetMode.ManualReset, Strings.MTX_UPDATER);
+
+        var startInfo = new ProcessStartInfo {
+          FileName = updaterPath,
+          Arguments = $"{Strings.UPDATER_ARGS} {Version}",
+          WindowStyle = ProcessWindowStyle.Normal
+        };
+        using (var proc = Process.Start(startInfo)) {
+
+          // Wait for setup process to initialize.
+          if (!ewh.WaitOne(config.WaitTimeOut))
+            throw new WaitHandleCannotBeOpenedException("Updater process not responding.");
+
+          singleInstance.ReleaseMutex();
+          logger.Debug("Single instance mutex released.");
+
+          Shutdown();
+          return true;
+
+        }
+      }
+      catch (Exception ex) {
+        logger.Error(ex, "Updater process failed");
+      }
+
+      return false;
 
     }
 

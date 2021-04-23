@@ -15,10 +15,10 @@ namespace XLauncher.Setup
   public partial class App : Application
   {
 
-    enum ErrCode { ERR_OK = 0, ERR_SETUP, ERR_UPDATE, ERR_ABORT, ERR_ARGS, ERR_LOCK }
+    enum ErrCode { ERR_OK = 0, ERR_SETUP, ERR_UPDATE, ERR_ABORT, ERR_ARGS, ERR_LOCK, ERR_TIMEOUT }
 
-    static NLog.Logger uLogger = NLog.LogManager.GetLogger("UsageLogger");
-    static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    static readonly NLog.Logger uLogger = NLog.LogManager.GetLogger("UsageLogger");
+    static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     static Mutex singleInstance;
 
     readonly Configuration config = Configuration.Instance;
@@ -311,7 +311,8 @@ namespace XLauncher.Setup
 
                   if (DateTime.Now - start > config.WaitTimeOut) {
                     logger.Debug($"Wait timeout after {(DateTime.Now - start).TotalSeconds} s.");
-                    throw new InvalidOperationException("Wait timeout.");
+                    // throw new InvalidOperationException("Wait timeout.");
+                    return ErrCode.ERR_TIMEOUT;
                   }
 
                 }
@@ -351,7 +352,6 @@ namespace XLauncher.Setup
           }
           catch (Exception ex) {
             logger.Error(ex, "Update failure");
-            return ErrCode.ERR_UPDATE;
           }
 
         } else {
