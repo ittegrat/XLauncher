@@ -1,5 +1,8 @@
+prefere 64bit
+remote config
+config => add / toggle trusted location in registry for XLauncher folder
 HKEY_CURRENT_USER/Software/Microsoft/Office/16.0/application_name/Security/Trusted Locations
-config => add / toggle trusted location in registry
+revise random timespan
 xll => func / cmd to set log level at runtime
 how to remove inherited elements ?
 UI -> ControlsList -> revise spacing
@@ -7,6 +10,8 @@ title format (string) + yes / no title
 add .net version detection code to setup / xlauncher ==> log
 
 ##  ChangeLog  ##
+  ### v0.12.0
+    - tiny fixes & improvements
   ### v0.10.0
     - Add AutoReload and AutoClose timers
     - Delete empty frameworks in local environments
