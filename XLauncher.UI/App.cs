@@ -123,7 +123,7 @@ namespace XLauncher.UI
         if (autoReload.Tag != null) {
           logger.Info("Starting daily maintenance.");
           if (NeedsUpdate(out string _)) {
-            autoClose.Interval = NextInterval(config.AutoCloseTime);
+            autoClose.Interval = NextInterval(config.AutoCloseTime, 0);
             logger.Info($"Setting AutoClose timer at '{DateTime.Now + autoClose.Interval}'.");
             autoClose.Tick += (s, e) => {
               logger.Info($"AutoClosing {Strings.APP_NAME}.");
@@ -144,8 +144,8 @@ namespace XLauncher.UI
       catch (Exception ex) {
         logger.Error(ex, "AutoReload EventHandler error");
       }
-      var ts = NextInterval(config.AutoReloadTime);
-      ts -= TimeSpan.FromSeconds(10 * 60 * rnd.NextDouble());
+      var offset = 10 * 60; // 10 minutes
+      var ts = NextInterval(config.AutoReloadTime, -offset);
       autoReload.Interval = ts;
       logger.Info($"Setting AutoReload timer at '{DateTime.Now + autoReload.Interval}'.");
       autoReload.Start();
@@ -228,16 +228,18 @@ namespace XLauncher.UI
       return false;
 
     }
-    TimeSpan NextInterval(TimeSpan time) {
+    TimeSpan NextInterval(TimeSpan time, double offset) {
 
+      var safety = offset < 0 ? TimeSpan.FromSeconds(offset) : TimeSpan.Zero;
       var now = DateTime.Now;
 
       var dt = now.Date;
-      if (now.TimeOfDay >= time)
+      if (now.TimeOfDay >= time + safety)
         dt = dt.AddDays(1);
       dt += time;
 
-      return dt - now;
+      var o = TimeSpan.FromSeconds(offset * rnd.NextDouble());
+      return dt - now + o;
 
     }
     bool StartUpdate(string updaterPath) {
