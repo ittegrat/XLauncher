@@ -10,6 +10,8 @@ title format (string) + yes / no title
 add .net version detection code to setup / xlauncher ==> log
 
 ##  ChangeLog  ##
+  ### v0.13.0 DEV
+    - tiny fixes
   ### v0.12.0
     - tiny fixes & improvements
   ### v0.10.0

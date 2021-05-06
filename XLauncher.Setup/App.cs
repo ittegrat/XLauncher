@@ -251,8 +251,10 @@ namespace XLauncher.Setup
         }
         logger.Info("Files copied.");
 
-        var dlink = CreateShortcuts(quiet);
-        logger.Info("Shortcuts created.");
+        var dlink = false;
+        if (config.CreateLinks)
+          dlink = CreateShortcuts(quiet);
+        logger.Info($"Shortcuts{(config.CreateLinks ? String.Empty : " not")} created.");
 
         uLogger.Info("{type}{version}{clean}{quiet}{dlink}{dst}",
           IsUpdater ? "Update" : "Setup",
@@ -276,6 +278,9 @@ namespace XLauncher.Setup
     ErrCode Update() {
 
       IsUpdater = true;
+
+      if (Process.GetProcessesByName("EXCEL").Count() > 0)
+        logger.Warn("Excel is running.");
 
       if (Mutex.TryOpenExisting(Strings.MTX_APPLICATION, out singleInstance)) {
         logger.Debug("Single instance mutex opened.");

@@ -22,6 +22,7 @@ namespace XLauncher.Setup
     public static Configuration Instance { get; } = new Configuration();
 
     public bool CleanInstall { get; }
+    public bool CreateLinks { get; }
     public bool DesktopLink { get; }
     public bool QuietInstall { get; }
     public TimeSpan WaitTimeOut { get; }
@@ -43,6 +44,7 @@ namespace XLauncher.Setup
         throw new ConfigurationErrorsException($"The configuration section '{Strings.SETUP_CONFIG_SECTION}' does not exist.");
 
       CleanInstall = GetValue("setup.clean", true);
+      CreateLinks = GetValue("link.create", true);
       DesktopLink = GetValue("link.desktop", true);
       QuietInstall = GetValue("setup.quiet", false);
       WaitTimeOut = TimeSpan.FromSeconds(GetValue<double>("setup.wait.timeout", 15));

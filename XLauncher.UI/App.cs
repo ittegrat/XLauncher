@@ -258,17 +258,35 @@ namespace XLauncher.UI
         return false;
       }
 
-      if (
-        Process.GetProcessesByName("EXCEL").Count() > 0 &&
-        MessageBoxResult.OK != MessageBox.Show(
-          $"There are still EXCEL processes running.\n" +
-          "Are you sure you want to continue?",
+      if (Process.GetProcessesByName("EXCEL").Count() > 0) {
+
+        var ans = MessageBox.Show(
+          "There are still EXCEL processes running. Do you want the" +
+          $" {Strings.APP_NAME} to try to kill them?\n" +
+          "Press the YES button to try\n" +
+          "Press the NO button to continue without trying\n" +
+          "Press the CANCEL button to postpone the update",
           Strings.APP_NAME,
-          MessageBoxButton.YesNo,
-          MessageBoxImage.Warning
-      )) {
-        logger.Info($"Update cancelled by the user after Excel warning.");
-        return false;
+          MessageBoxButton.YesNoCancel,
+          MessageBoxImage.Warning,
+          MessageBoxResult.No
+        );
+
+        if (ans == MessageBoxResult.Cancel) {
+          logger.Info($"Update cancelled by the user after Excel warning.");
+          return false;
+        }
+
+        if (ans == MessageBoxResult.Yes) {
+          logger.Info("Killing EXCEL process.");
+          Array.ForEach(Process.GetProcessesByName("EXCEL"), p => {
+            try {
+              p.Kill();
+            }
+            catch (Exception ex) { logger.Debug(ex, $"Kill process failed"); }
+          });
+        }
+
       }
 
       logger.Info("Starting update process.");
