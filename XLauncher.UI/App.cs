@@ -30,6 +30,7 @@ namespace XLauncher.UI
     static extern bool IsIconic(IntPtr handle);
 
     static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    static readonly ObservableCollection<string> logs = new ObservableCollection<string>();
     static readonly Configuration config = Configuration.Instance;
     static readonly DispatcherTimer autoClose = new DispatcherTimer();
     static readonly DispatcherTimer autoReload = new DispatcherTimer();
@@ -38,8 +39,7 @@ namespace XLauncher.UI
     static Mutex singleInstance;
     static string appPath = null;
 
-    public static ObservableCollection<string> Logs { get; } = new ObservableCollection<string>();
-
+    public static ObservableCollection<string> Logs => logs;
     public static string Domain { get; } = Environment.UserDomainName?.Trim().ToUpperInvariant();
     public static string Machine { get; } = Environment.MachineName?.Trim().ToUpperInvariant();
     public static string User { get; } = Environment.UserName?.Trim().ToUpperInvariant();
