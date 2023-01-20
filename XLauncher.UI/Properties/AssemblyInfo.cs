@@ -6,8 +6,6 @@ using System.Windows;
 
 [assembly: AssemblyTitle("XLauncher.UI")]
 [assembly: AssemblyDescription("XLauncher GUI")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCulture("")]
 
 //In order to begin building localizable applications, set
 //<UICulture>CultureYouAreCodingWith</UICulture> in your .csproj file

@@ -4,14 +4,22 @@ setlocal
 set CFG=Release
 ::set CFG=Debug
 
-::call "C:\Program Files (x86)\Microsoft Visual Studio 15.0\Common7\Tools\VsDevCmd.bat"
-::devenv ..\XLauncher.sln -build %CFG%
+set TOPDIR=%~dp0..\
 
-set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
-%MSBUILD% %~dp0..\XLauncher.sln -target:Rebuild "-p:Configuration=%CFG%;Platform=Any CPU"
+for /f "delims=" %%i in ('"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath') do (
+  if exist "%%i\Common7\Tools\vsdevcmd.bat" (
+    call "%%i\Common7\Tools\vsdevcmd.bat"
+  ) else (
+    echo [ERROR] VsDevCmd.bat not found
+    exit /b 2
+  )
+)
 
-set BLD=%~dp0..\_build_\AnyCPU_%CFG%\
-set DST=%~dp0..\_dist_\
+msbuild %TOPDIR%XLauncher.sln -t:Clean "-p:Configuration=%CFG%;Platform=Any CPU"
+msbuild %TOPDIR%XLauncher.sln -t:Build "-p:Configuration=%CFG%;Platform=Any CPU"
+
+set BLD=%TOPDIR%_build_\AnyCPU_%CFG%\
+set DST=%TOPDIR%_dist_\
 
 rmdir /s /q %DST%
 
@@ -41,24 +49,21 @@ for %%f in (
 
 set SRC=%BLD%XLauncher.XAI\
 for %%f in (
-  XLauncher.xll
-  XLauncher.xll.config
+  XLauncher32.xll
+  XLauncher32.xll.config
   XLauncher64.xll
   XLauncher64.xll.config
 ) do (
   copy /y %SRC%%%f %APP%
 )
 if %CFG%==Debug copy /y %SRC%XLauncher.XAI.dll %APP%
-if %CFG%==Debug copy /y %SRC%XLauncher.dna %APP%XLauncher32.dna
-move %APP%XLauncher.xll %APP%XLauncher32.xll
-move %APP%XLauncher.xll.config %APP%XLauncher32.xll.config
+if %CFG%==Debug copy /y %SRC%XLauncher64.dna %APP%
 
 set XSDS=%DST%XSDs\
 if not exist %XSDS% mkdir %XSDS%
 
-set SRC=%~dp0..\XLauncher.Entities\XSDs\
+set SRC=%TOPDIR%XLauncher.Entities\XSDs\
 for %%f in (
-  XmlSchemas.sln
   Authorization.xsd
   Common.xsd
   Environments.xsd
@@ -67,7 +72,7 @@ for %%f in (
   copy /y %SRC%%%f %XSDS%
 )
 
-set GETVER=powershell -ExecutionPolicy Unrestricted -file %~dp0GetVer.ps1
+set GETVER=powershell -ExecutionPolicy RemoteSigned -file %~dp0GetVer.ps1
 set ASM=%APP%XLauncher.exe
 %GETVER% %ASM% > %DST%version.txt
 

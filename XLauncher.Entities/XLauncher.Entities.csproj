@@ -1,106 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(SolutionDir)Common.props" Condition="Exists('$(SolutionDir)Common.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project>
+
+  <Import Project="$(SolutionDir).msbuild\Common.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1DFF9562-3892-4651-81CC-EC73CD6DCCCF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XLauncher.Entities</RootNamespace>
-    <AssemblyName>XLauncher.Entities</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net48</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="$(SolutionDir).msbuild\Common.targets" />
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
+    <Compile Include="..\XLauncher.Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="..\XLauncher.Shared\Strings.cs" Link="Common\Strings.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Authorization\AuthDB.cs" />
-    <Compile Include="Authorization\Domain.cs" />
-    <Compile Include="Authorization\Machine.cs" />
-    <Compile Include="Authorization\User.cs" />
-    <Compile Include="Common\IEntity.cs" />
-    <Compile Include="Common\PathInfo.cs" />
-    <Compile Include="..\Strings.cs">
-      <Link>Common\Strings.cs</Link>
-    </Compile>
-    <Compile Include="Common\ValidationException.cs" />
-    <Compile Include="Environments\Addin.cs" />
-    <Compile Include="Environments\Box.cs" />
-    <Compile Include="Environments\CheckBox.cs" />
-    <Compile Include="Environments\ComboBox.cs" />
-    <Compile Include="Environments\ComboBoxEx.cs" />
-    <Compile Include="Environments\Control.cs" />
-    <Compile Include="Environments\DatePicker.cs" />
-    <Compile Include="Environments\Environment.cs" />
-    <Compile Include="Environments\EVar.cs" />
-    <Compile Include="Environments\Framework.cs" />
-    <Compile Include="Environments\Import.cs" />
-    <Compile Include="Environments\NameValuePair.cs" />
-    <Compile Include="Environments\TextBox.cs" />
-    <Compile Include="Environments\XLL.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Session\Context.cs" />
-    <Compile Include="Session\Param.cs" />
-    <Compile Include="Session\Session.cs" />
+    <EmbeddedResource Include="XSDs\*.xsd" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Generated\*.cs" />
+    <PackageReference Include="NLog" Version="4.6.8" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="XSDs\Common.xsd">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="XSDs\Authorization.xsd">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="XSDs\Environments.xsd">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="XSDs\Session.xsd">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <None Include="XSDs\Generate.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NLog">
-      <Version>4.6.8</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <CleanDependsOn>
-      $(CleanDependsOn);
-      Restore;
-    </CleanDependsOn>
-  </PropertyGroup>
+
 </Project>

@@ -1,27 +1,40 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version16
-VisualStudioVersion = 16.0.31019.35
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLauncher.UI", "XLauncher.UI\XLauncher.UI.csproj", "{E9C1B905-A980-4E3D-BE02-E7B069FD28A4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MSBuild", "MSBuild", "{03416659-59C8-4FAF-A1C9-34844C04A2D2}"
+	ProjectSection(SolutionItems) = preProject
+		.msbuild\Common.props = .msbuild\Common.props
+		.msbuild\Common.targets = .msbuild\Common.targets
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLauncher.Entities", "XLauncher.Entities\XLauncher.Entities.csproj", "{1DFF9562-3892-4651-81CC-EC73CD6DCCCF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLauncher.XAI", "XLauncher.XAI\XLauncher.XAI.csproj", "{E5F048BF-728F-48F7-A232-5018AB82A29C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{EB493A0C-70CE-4D93-A60A-22664D191FD5}"
+	ProjectSection(SolutionItems) = preProject
+		tools\Deploy.cmd = tools\Deploy.cmd
+		tools\Xsd2Entities.cmd = tools\Xsd2Entities.cmd
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XSDs", "XSDs", "{33203DBC-50B4-46E5-A403-DBD508345BC2}"
+	ProjectSection(SolutionItems) = preProject
+		XLauncher.Entities\XSDs\Authorization.xsd = XLauncher.Entities\XSDs\Authorization.xsd
+		XLauncher.Entities\XSDs\Common.xsd = XLauncher.Entities\XSDs\Common.xsd
+		XLauncher.Entities\XSDs\Environments.xsd = XLauncher.Entities\XSDs\Environments.xsd
+		XLauncher.Entities\XSDs\Session.xsd = XLauncher.Entities\XSDs\Session.xsd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XSDs (External)", "XSDs (External)", "{844B748E-66EE-4ABF-B7D8-1CF34198E084}"
 	ProjectSection(SolutionItems) = preProject
 		..\_extlibs_\NLog\NLog.468.xsd = ..\_extlibs_\NLog\NLog.468.xsd
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevUtils", "DevUtils", "{EB493A0C-70CE-4D93-A60A-22664D191FD5}"
-	ProjectSection(SolutionItems) = preProject
-		DevUtils\Deploy.cmd = DevUtils\Deploy.cmd
-		pseudo-code.md = pseudo-code.md
-		todo.md = todo.md
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLauncher.UI", "XLauncher.UI\XLauncher.UI.csproj", "{E9C1B905-A980-4E3D-BE02-E7B069FD28A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLauncher.Setup", "XLauncher.Setup\XLauncher.Setup.csproj", "{1998166C-2BC4-4E24-8C4A-5E286239648C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLauncher.Entities", "XLauncher.Entities\XLauncher.Entities.csproj", "{1DFF9562-3892-4651-81CC-EC73CD6DCCCF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLauncher.XAI", "XLauncher.XAI\XLauncher.XAI.csproj", "{E5F048BF-728F-48F7-A232-5018AB82A29C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLauncher.Setup", "XLauncher.Setup\XLauncher.Setup.csproj", "{1998166C-2BC4-4E24-8C4A-5E286239648C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

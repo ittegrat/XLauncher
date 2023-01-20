@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
 
   <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <BuildRoot>$(SolutionDir)_build_\$(Platform)_$(Configuration)\</BuildRoot>
     <OutputPath>$(BuildRoot)$(MSBuildProjectName)\</OutputPath>
     <IntermediateOutputPath>$(OutputPath)obj\</IntermediateOutputPath>
-    <MSBuildProjectExtensionsPath>$(IntermediateOutputPath)</MSBuildProjectExtensionsPath>
+    <BaseOutputPath>$(OutputPath)</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(IntermediateOutputPath)</BaseIntermediateOutputPath>
   </PropertyGroup>
 
 </Project>

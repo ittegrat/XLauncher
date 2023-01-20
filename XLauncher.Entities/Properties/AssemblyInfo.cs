@@ -6,5 +6,3 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("XLauncher.Entities")]
 [assembly: AssemblyDescription("XLauncher Entities Library")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCulture("")]

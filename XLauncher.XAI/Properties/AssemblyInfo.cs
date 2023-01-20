@@ -6,5 +6,3 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("XLauncher.XAI")]
 [assembly: AssemblyDescription("XLauncher Excel Addin")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCulture("")]

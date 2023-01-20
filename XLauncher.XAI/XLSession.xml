@@ -6,7 +6,10 @@
   title="Batch SimpleSession Test"
   loadGlobalsFirst="true"
 >
+  <addin path="C:\Development\NET_Projects\XLauncher\tests\VBA-addin.xlam" />
   <context name="Batch Session">
+    <addin path="C:\Development\NET_Projects\XLauncher\tests\RW-addin.xll" readOnly="false" />
+    <addin path="C:\Development\NET_Projects\XLauncher\tests\RO-addin.xll" />
     <param name="Session" type="String" value="SimpleSession" />
     <param name="Param" type="String" value="A string value" />
   </context>
