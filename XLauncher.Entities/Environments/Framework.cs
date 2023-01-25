@@ -69,7 +69,7 @@ namespace XLauncher.Entities.Environments
     }
     public void Merge(Framework other) {
 
-      Version = (Version ?? "") + "|" + (other.Version ?? "");
+      Version = (Version ?? String.Empty) + "|" + (other.Version ?? String.Empty);
 
       if (other.EVars.Length > 0) {
         var evs = new List<EVar>(EVars);
@@ -98,24 +98,24 @@ namespace XLauncher.Entities.Environments
       if (other.Boxes.Length > 0) {
 
         var boxes = new List<Box>(Boxes);
-        var controls = Boxes.SelectMany((b, i) => b.Controls.Select((c, j) => new { c.Name, i, j })).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+        var controls = boxes.SelectMany((b, i) => b.Controls.Select((c, j) => new { c.Name, b.Text, i, j })).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
 
         foreach (var ob in other.Boxes) {
 
-          var b = Array.Find(Boxes, x => x.Text.Equals(ob.Text, StringComparison.OrdinalIgnoreCase));
+          var b = boxes.Find(x => x.Text.Equals(ob.Text, StringComparison.OrdinalIgnoreCase));
           var bc = b != null ? new List<Control>(b.Controls) : null;
 
           var oc = new List<Control>(ob.Controls);
 
           foreach (var c in ob.Controls) {
 
-            if (controls.TryGetValue(c.Name, out var x)) {
-              if (String.Equals(Boxes[x.i].Text, b?.Text, StringComparison.OrdinalIgnoreCase))
-                bc[x.j] = c;
-              else
-                Boxes[x.i].Controls[x.j] = c;
+            if (controls.TryGetValue(c.Name, out var x)) {   // if control exists
+              if (String.Equals(x.Text, b?.Text, StringComparison.OrdinalIgnoreCase))   // and is in the current box
+                bc[x.j] = c;   // replace in list
+              else   // and is in another box
+                boxes[x.i].Controls[x.j] = c;   // replace in box
               oc.Remove(c);
-            } else if (b != null) {
+            } else if (b != null) {   // if control doesn't exist, but box does
               bc.Add(c);
               oc.Remove(c);
             }
@@ -133,16 +133,6 @@ namespace XLauncher.Entities.Environments
         }
 
         Boxes = boxes.ToArray();
-
-        //@  foreach box
-        //@  
-        //@    foreach ctrl
-        //@  
-        //@      if ctrl exist --> replace + remove
-        //@  
-        //@      if box exist --> add to it + remove
-        //@  
-        //@    if box.controls.count > 0 --> add box
 
       }
 

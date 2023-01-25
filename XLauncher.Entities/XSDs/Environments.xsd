@@ -92,6 +92,7 @@
       <xs:element name="comboBoxEx" type="ComboBoxEx" />
       <xs:element name="datePicker" type="DatePicker" />
       <xs:element name="nvp" type="NameValuePair" />
+      <xs:element name="null" type="NullControl" />
       <xs:element name="textBox" type="TextBox" />
     </xs:choice>
     <xs:attribute name="text" type="xs:string" use="required" />
@@ -145,6 +146,12 @@
       <xs:extension base="Control">
         <xs:attribute name="value" type="xs:string" use="required" />
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="NullControl">
+    <xs:complexContent>
+      <xs:extension base="Control" />
     </xs:complexContent>
   </xs:complexType>
 

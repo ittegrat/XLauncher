@@ -10,7 +10,6 @@ config => add / toggle trusted location in registry for XLauncher folder
 HKEY_CURRENT_USER/Software/Microsoft/Office/16.0/application_name/Security/Trusted Locations
 revise random timespan
 xll => func / cmd to set log level at runtime
-how to remove inherited elements ?
 UI -> ControlsList -> revise spacing
 title format (string) + yes / no title
 add .net version detection code to setup / xlauncher ==> log
@@ -18,6 +17,7 @@ add .net version detection code to setup / xlauncher ==> log
 ##  ChangeLog  ##
   ### v0.13.0 DEV
     - Switch to VS 2022
+    - Add NullControl to XLauncher.Entities
     - tiny fixes
   ### v0.12.0
     - tiny fixes & improvements

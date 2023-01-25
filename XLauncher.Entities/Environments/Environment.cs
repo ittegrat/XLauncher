@@ -117,6 +117,7 @@ namespace XLauncher.Entities.Environments
           throw;
         }
 
+        env.RemoveNullControls();
         return env;
 
       }
@@ -229,6 +230,14 @@ namespace XLauncher.Entities.Environments
         }
         frameworks.Insert(i, other);
         fmap.Add(other.Name, other);
+      }
+    }
+    public void RemoveNullControls() {
+      foreach (var fw in frameworks) {
+        foreach (var b in fw.Boxes) {
+          b.Controls = b.Controls.Where(c => !(c is NullControl)).ToArray();
+        }
+        fw.Boxes = fw.Boxes.Where(b => b.Controls.Length > 0).ToArray();
       }
     }
     public void SaveAs(string path, bool overwrite) {
