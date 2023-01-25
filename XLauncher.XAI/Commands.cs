@@ -3,7 +3,7 @@ using ExcelDna.Integration;
 namespace XLauncher.XAI
 {
 
-  [ExcelFunction(Prefix = "XLauncher.Log.")]
+  [ExcelCommand(Prefix = "XLauncher.Log.")]
   public static class LogDisplayCommands
   {
     public static void Clear() {

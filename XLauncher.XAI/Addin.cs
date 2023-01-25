@@ -35,6 +35,7 @@ namespace XLauncher.XAI
 
         if (!String.IsNullOrWhiteSpace(Session.Title))
           XlCall.Excel(XlCall.xlfAppTitle, Session.Title.Trim());
+
         XlCall.Excel(XlCall.xlcMessage, false);
 
         Directory.SetCurrentDirectory(cd);
@@ -62,7 +63,11 @@ namespace XLauncher.XAI
 
         if (!File.Exists(ai.Path)) {
           logger.Error($"Cannot find file '{ai.Path}'.");
-          continue;
+          var ans = (bool)XlCall.Excel(XlCall.xlcAlert, $"Cannot find file '{ai.Path}'.\nContinue to load the Environment '{Session.Title}' ?", 1);
+          if (ans)
+            continue;
+          else
+            return;
         }
 
         XlCall.Excel(XlCall.xlcMessage, true, $"Loading {Path.GetFileName(ai.Path)}...");
@@ -81,7 +86,8 @@ namespace XLauncher.XAI
       try {
         logger.Debug($"RegisterXLL '{path}'");
         Directory.SetCurrentDirectory(Path.GetDirectoryName(path));
-        var ans = ExcelIntegration.RegisterXLL(path);
+        ExcelIntegration.RegisterXLL(path);
+        logger.Debug($"Loaded '{path}'");
       }
       catch (Exception ex) {
         logger.Error(ex, $"Cannot load XLL");

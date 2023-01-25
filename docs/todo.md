@@ -1,5 +1,3 @@
-fix message for unknown addin
-
 fix test cases
 Add ChangeLog.md and README.md
 add version info to env launch log
