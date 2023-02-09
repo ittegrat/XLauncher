@@ -17,7 +17,7 @@ namespace XLauncher.UI
   public class LocalSettings
   {
 
-    static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
     public bool ConfirmDelete { get; set; } = true;
     public bool LoadGlobalsFirst { get; set; } = true;
@@ -159,11 +159,8 @@ namespace XLauncher.UI
       string root = null;
 
       foreach (var view in views) {
-
         using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view)) {
-
           foreach (var ver in versions) {
-
             using (var sk = hklm.OpenSubKey($@"SOFTWARE\Microsoft\Office\{ver}\Excel\InstallRoot")) {
               if (sk != null) {
                 is32 = (view == RegistryView.Registry32);
@@ -172,20 +169,20 @@ namespace XLauncher.UI
                 break;
               }
             }
-
           }
-
           hklm?.Close();
-
         }
-
       }
 
-      var path = Path.Combine(root, "Excel.exe");
+      if (root != null) {
+        var path = Path.Combine(root, "Excel.exe");
+        if (File.Exists(path)) {
+          logger.Info($"Excel path: '{path}'.");
+          return (is32, path);
+        }
+      }
 
-      if (File.Exists(path))
-        return (is32, path);
-
+      logger.Info("Excel path not detected.");
       return (false, null);
 
     }

@@ -1,7 +1,6 @@
 fix test cases
 Add ChangeLog.md and README.md
 add version info to env launch log
-enhance 'detect xl version' { try/catch + log warning success }
 remote config
 detect include recursion in entities
 force update after n trials / expiry date (e.g. 1 month of deprecation)
