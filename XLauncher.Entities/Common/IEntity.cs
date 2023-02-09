@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -32,7 +33,11 @@ namespace XLauncher.Entities.Common
 
     static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     static readonly XmlReaderSettings settings = GetXmlReaderSettings();
+    static readonly Dictionary<string, object> cache = new Dictionary<string, object>();
 
+    public static bool UseEntityCache { get; set; } = false;
+
+    public static void ClearCache() { cache.Clear(); }
     public static T DeepClone<T>(this T t) where T : IEntity<T> {
       using (var ms = new MemoryStream()) {
         var bf = new BinaryFormatter();
@@ -42,6 +47,9 @@ namespace XLauncher.Entities.Common
       }
     }
     public static T Deserialize<T>(string path) where T : IEntity<T>, new() {
+
+      if (UseEntityCache && cache.TryGetValue(path, out var obj))
+        return DeepClone((T)obj);
 
       if (!File.Exists(path))
         throw new Exception($"{typeof(T).Name} '{path}' does not exist.");
@@ -63,8 +71,13 @@ namespace XLauncher.Entities.Common
           throw new ValidationException($"{ex.Message} => {ex.InnerException.Message}");
         }
         t.Validate();
+        if (UseEntityCache) {
+          cache.Add(path, t);
+          return DeepClone(t);
+        }
         return t;
       }
+
     }
     public static void Serialize<T>(this T t, string path) where T : IEntity<T> {
 
@@ -104,8 +117,9 @@ namespace XLauncher.Entities.Common
 
       var resNames = schemas.Select(s => asm.GetManifestResourceNames().Single(rn => rn.EndsWith(s, StringComparison.OrdinalIgnoreCase)));
 
-      var xrs = new XmlReaderSettings();
-      xrs.ValidationType = ValidationType.Schema;
+      var xrs = new XmlReaderSettings {
+        ValidationType = ValidationType.Schema
+      };
       xrs.ValidationEventHandler += (s, e) => {
 
         var xr = (XmlReader)s;

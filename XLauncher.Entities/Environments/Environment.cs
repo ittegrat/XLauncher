@@ -24,8 +24,12 @@ namespace XLauncher.Entities.Environments
     List<Framework> frameworks = new List<Framework>();
     Dictionary<string, Framework> fmap = new Dictionary<string, Framework>(StringComparer.OrdinalIgnoreCase);
 
-    public AuthDB AuthDB { get; } = AuthDB.New();
+    public static bool UseEntityCache {
+      get { return IEntityExtensions.UseEntityCache; }
+      set { IEntityExtensions.UseEntityCache = value; }
+    }
 
+    public AuthDB AuthDB { get; } = AuthDB.New();
     [XmlIgnore]
     public Framework[] Frameworks {
       get {
@@ -36,6 +40,7 @@ namespace XLauncher.Entities.Environments
       }
     }
 
+    public static void ClearCache() { IEntityExtensions.ClearCache(); }
     public static bool IsEnvironment(string path) {
       var ef = Path.Combine(path, ENVROOTFILE);
       return File.Exists(ef);

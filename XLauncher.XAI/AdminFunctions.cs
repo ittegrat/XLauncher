@@ -63,7 +63,7 @@ namespace XLauncher.XAI
         var ans = new object[users.Count, 3];
         var i = 0;
 
-        foreach (var user in users ) {
+        foreach (var user in users) {
           ans[i, 0] = user.D;
           ans[i, 1] = user.U;
           ans[i, 2] = user.M;
@@ -242,6 +242,7 @@ namespace XLauncher.XAI
         if (roots.Count == 0)
           return "#ERROR: empty roots";
 
+        Environment.ClearCache();
         var envs = roots.SelectMany(root => Environment.LoadMany(root).Select(e => (Root: root, Env: e))).ToList();
 
         Environments = envs;
@@ -264,6 +265,11 @@ namespace XLauncher.XAI
         return $"#ERROR: {ex.Message}";
       }
 
+    }
+    public static object UseEntityCache(bool UseCache, object Trigger) {
+      if (Trigger is ExcelError) return Trigger;
+      Environment.UseEntityCache = UseCache;
+      return DateTime.Now;
     }
 
   }

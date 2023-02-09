@@ -68,6 +68,8 @@ namespace XLauncher.UI
       if ((config = ConfigurationManager.GetSection(Strings.CONFIG_SECTION) as Hashtable) == null)
         throw new ConfigurationErrorsException($"The configuration section '{Strings.CONFIG_SECTION}' does not exist.");
 
+      Environment.UseEntityCache = GetValue("entity.usecache", false);
+
       SetupFilename = GetValue("setup.filename", "XLauncher.Setup.exe");
       VersionFile = GetValue("setup.versionfile", "version.txt");
       WaitTimeOut = TimeSpan.FromSeconds(GetValue("setup.waittimeout", 15));

@@ -42,6 +42,7 @@ namespace XLauncher.UI.DataAdapters
         logger.Debug($@"User is: {App.Domain}\{App.User}@{App.Machine}");
         logger.Trace($"Filling environments.");
 
+        EE.Environment.ClearCache();
         var envs = Configuration.Instance.PublicRoots
           .SelectMany(root => EE.Environment.LoadMany(root))
           .Where(e => e.IsAuthorized(App.Domain, App.User, App.Machine, Configuration.Instance.DefaultAuth))

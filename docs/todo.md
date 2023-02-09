@@ -3,6 +3,7 @@ Add ChangeLog.md and README.md
 add version info to env launch log
 enhance 'detect xl version' { try/catch + log warning success }
 remote config
+detect include recursion in entities
 force update after n trials / expiry date (e.g. 1 month of deprecation)
 config => add / toggle trusted location in registry for XLauncher folder
 HKEY_CURRENT_USER/Software/Microsoft/Office/16.0/application_name/Security/Trusted Locations
@@ -16,6 +17,7 @@ add .net version detection code to setup / xlauncher ==> log
   ### v0.13.0 DEV
     - Switch to VS 2022
     - Add NullControl to XLauncher.Entities
+    - Add Entity cache
     - tiny fixes
   ### v0.12.0
     - tiny fixes & improvements
