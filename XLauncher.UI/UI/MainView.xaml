@@ -127,8 +127,10 @@
                     <CheckBox.Style>
                       <Style TargetType="{x:Type CheckBox}">
                         <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsXLL}" Value="true">
+                            <Setter Property="Foreground" Value="{Binding XLLColor}"/>
+                          </DataTrigger>
                           <DataTrigger Binding="{Binding ReadOnly}" Value="false">
-                            <Setter Property="Foreground" Value="{Binding RWColor}"/>
                             <Setter Property="FontWeight" Value="DemiBold"/>
                           </DataTrigger>
                         </Style.Triggers>
@@ -478,6 +480,7 @@
                         Margin="4,4,0,3"
                         ItemsSource="{Binding Source={StaticResource ExcelArchTypes}}"
                         SelectedItem="{Binding ExcelArch}"
+                        SelectionChanged="OnSelectExcelArch"
               />
               <Button Content="Path:"
                       Height="22" Width="42"

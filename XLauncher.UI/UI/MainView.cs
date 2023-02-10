@@ -65,6 +65,7 @@ namespace XLauncher.UI
           env.Save();
       });
     }
+    void OnSelectExcelArch(object sender, SelectionChangedEventArgs e) { GAList.Items.Refresh(); }
     void OnSelectEnvironment(object sender, SelectionChangedEventArgs e) {
 
       Try(() => {
