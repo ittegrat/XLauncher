@@ -18,6 +18,10 @@
   <Import Project="$(SolutionDir).msbuild\Common.targets" />
 
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\XLauncher.Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Include="..\XLauncher.Shared\Strings.cs" Link="Strings.cs" />
   </ItemGroup>
@@ -28,10 +32,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\XLauncher.Entities\XLauncher.Entities.csproj" />
-    <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="NLog" Version="5.1.2" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'" >
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Content Include="Settings\Settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

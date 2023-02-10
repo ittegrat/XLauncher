@@ -1,13 +1,11 @@
 fix test cases
 Add ChangeLog.md and README.md
-add version info to env launch log
 remote config
 detect include recursion in entities
 force update after n trials / expiry date (e.g. 1 month of deprecation)
 config => add / toggle trusted location in registry for XLauncher folder
 HKEY_CURRENT_USER/Software/Microsoft/Office/16.0/application_name/Security/Trusted Locations
 revise random timespan
-xll => func / cmd to set log level at runtime
 UI -> ControlsList -> revise spacing
 title format (string) + yes / no title
 add .net version detection code to setup / xlauncher ==> log
@@ -17,7 +15,8 @@ add .net version detection code to setup / xlauncher ==> log
     - Switch to VS 2022
     - Add NullControl to XLauncher.Entities
     - Add Entity cache
-    - tiny fixes
+    - Add AppVersion to 'UsageLogger'
+    - tiny fixes & improvements
   ### v0.12.0
     - tiny fixes & improvements
   ### v0.10.0

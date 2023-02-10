@@ -14,7 +14,7 @@ namespace XLauncher.UI
   {
 
     const string USAGE_LOGGER = "UsageLogger";
-    static NLog.Logger uLogger = NLog.LogManager.GetLogger(USAGE_LOGGER);
+    static readonly NLog.Logger uLogger = NLog.LogManager.GetLogger(USAGE_LOGGER);
 
     ICommand cmdLaunch;
     public ICommand CmdLaunch { get { return cmdLaunch ?? (cmdLaunch = new Command(nameof(CmdLaunch), this, () => ExecLaunch(false), CanLaunch)); } }
@@ -118,7 +118,8 @@ namespace XLauncher.UI
 
       var proc = Process.Start(startInfo);
 
-      uLogger.Info("{local}{group}{name}{arch}",
+      uLogger.Info("{appver}{local}{group}{name}{arch}",
+        App.Version,
         env.IsLocal,
         env.Group,
         env.Name,

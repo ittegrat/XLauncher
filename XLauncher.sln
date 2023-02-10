@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XSDs", "XSDs", "{33203DBC-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XSDs (External)", "XSDs (External)", "{844B748E-66EE-4ABF-B7D8-1CF34198E084}"
 	ProjectSection(SolutionItems) = preProject
-		..\_extlibs_\NLog\NLog.468.xsd = ..\_extlibs_\NLog\NLog.468.xsd
+		..\_extlibs_\NLog\NLog.v512.xsd = ..\_extlibs_\NLog\NLog.v512.xsd
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLauncher.UI", "XLauncher.UI\XLauncher.UI.csproj", "{E9C1B905-A980-4E3D-BE02-E7B069FD28A4}"

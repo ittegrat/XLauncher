@@ -39,7 +39,7 @@ namespace XLauncher.UI.DataAdapters
     public static void Fill(ICollection<Environment> environments) {
       try {
 
-        logger.Debug($@"User is: {App.Domain}\{App.User}@{App.Machine}");
+        logger.Debug($@"User is '{App.Domain}\{App.User}@{App.Machine}'.");
         logger.Trace($"Filling environments.");
 
         EE.Environment.ClearCache();
