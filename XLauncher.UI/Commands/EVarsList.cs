@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace XLauncher.UI
@@ -163,8 +164,7 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveDown(ev);
-      CurrentEnvironment.Render(EVars);
-      EVarsList.SelectedItem = EVars.First(e => e.Name == ev.Name);
+      RenderEvMove(ev);
 
     }
 
@@ -189,9 +189,15 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveUp(ev);
+      RenderEvMove(ev);
+
+    }
+
+    void RenderEvMove(EVar ev) {
       CurrentEnvironment.Render(EVars);
       EVarsList.SelectedItem = EVars.First(e => e.Name == ev.Name);
-
+      EVarsList.UpdateLayout();
+      ((ListViewItem)EVarsList.ItemContainerGenerator.ContainerFromIndex(EVarsList.SelectedIndex)).Focus();
     }
 
   }

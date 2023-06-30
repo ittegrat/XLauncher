@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace XLauncher.UI
@@ -229,8 +230,7 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveDown(ai);
-      CurrentEnvironment.Render(Addins);
-      AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path);
+      RenderAiMove(ai);
 
     }
 
@@ -255,9 +255,15 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveUp(ai);
+      RenderAiMove(ai);
+
+    }
+
+    void RenderAiMove(Addin ai) {
       CurrentEnvironment.Render(Addins);
       AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path);
-
+      AddinsList.UpdateLayout();
+      ((ListViewItem)AddinsList.ItemContainerGenerator.ContainerFromIndex(AddinsList.SelectedIndex)).Focus();
     }
 
   }

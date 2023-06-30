@@ -329,6 +329,15 @@
                   </ContextMenu>
                 </ListView.ContextMenu>
 
+                <ListView.InputBindings>
+                  <KeyBinding Gesture="ALT+Up"
+                              Command="{Binding CmdAiMoveUp}"
+                  />
+                  <KeyBinding Gesture="ALT+Down"
+                              Command="{Binding CmdAiMoveDown}"
+                  />
+                </ListView.InputBindings>
+
               </ListView>
             </TabItem>
 
@@ -397,6 +406,15 @@
                     </MenuItem>
                   </ContextMenu>
                 </ListView.ContextMenu>
+
+                <ListView.InputBindings>
+                  <KeyBinding Gesture="ALT+Up"
+                              Command="{Binding CmdEvMoveUp}"
+                  />
+                  <KeyBinding Gesture="ALT+Down"
+                              Command="{Binding CmdEvMoveDown}"
+                  />
+                </ListView.InputBindings>
 
               </ListView>
             </TabItem>
