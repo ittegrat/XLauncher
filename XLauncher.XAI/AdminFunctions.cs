@@ -36,9 +36,9 @@ namespace XLauncher.XAI
 
         var users = new HashSet<(string D, string U, string M)>();
 
-        foreach (var env in Environments) {
+        foreach (var (_, Env) in Environments) {
 
-          foreach (var d in env.Env.AuthDB.Domains) {
+          foreach (var d in Env.AuthDB.Domains) {
 
             if (d.All) {
               users.Add((d.Key, "any", "any"));
@@ -63,10 +63,10 @@ namespace XLauncher.XAI
         var ans = new object[users.Count, 3];
         var i = 0;
 
-        foreach (var user in users) {
-          ans[i, 0] = user.D;
-          ans[i, 1] = user.U;
-          ans[i, 2] = user.M;
+        foreach (var (D, U, M) in users) {
+          ans[i, 0] = D;
+          ans[i, 1] = U;
+          ans[i, 2] = M;
           ++i;
         }
 

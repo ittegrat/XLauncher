@@ -15,7 +15,7 @@ namespace XLauncher.UI
   {
 
     public bool IsLocalEnv() {
-      return (EnvList.SelectedItem is Environment env) ? env.IsLocal : false;
+      return (EnvList.SelectedItem is Environment env) && env.IsLocal;
     }
 
     ICommand cmdEnvClone;

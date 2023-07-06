@@ -11,7 +11,8 @@ title format (string) + yes / no title
 add .net version detection code to setup / xlauncher ==> log
 
 ##  ChangeLog  ##
-  ### v0.13.0 DEV
+  ### v0.14.0 DEV
+  ### v0.13.0
     - Switch to VS 2022
     - Add NullControl to XLauncher.Entities
     - Add Entity cache

@@ -111,9 +111,7 @@ namespace XLauncher.UI.DataAdapters
       var evs = new List<EE.EVar>(fw.EVars);
       var i = evs.IndexOf((EE.EVar)ev);
       if (i > 0) {
-        var x = evs[i];
-        evs[i] = evs[i - 1];
-        evs[i - 1] = x;
+        (evs[i - 1], evs[i]) = (evs[i], evs[i - 1]);
         fw.EVars = evs.ToArray();
       }
     }
@@ -122,9 +120,7 @@ namespace XLauncher.UI.DataAdapters
       var evs = new List<EE.EVar>(fw.EVars);
       var i = evs.IndexOf((EE.EVar)ev);
       if (i < evs.Count - 1) {
-        var x = evs[i];
-        evs[i] = evs[i + 1];
-        evs[i + 1] = x;
+        (evs[i + 1], evs[i]) = (evs[i], evs[i + 1]);
         fw.EVars = evs.ToArray();
       }
     }
@@ -147,9 +143,7 @@ namespace XLauncher.UI.DataAdapters
       var ais = new List<EE.Addin>(fw.Addins);
       var i = ais.IndexOf((EE.Addin)ai);
       if (i > 0) {
-        var x = ais[i];
-        ais[i] = ais[i - 1];
-        ais[i - 1] = x;
+        (ais[i - 1], ais[i]) = (ais[i], ais[i - 1]);
         fw.Addins = ais.ToArray();
       }
     }
@@ -158,9 +152,7 @@ namespace XLauncher.UI.DataAdapters
       var ais = new List<EE.Addin>(fw.Addins);
       var i = ais.IndexOf((EE.Addin)ai);
       if (i < ais.Count - 1) {
-        var x = ais[i];
-        ais[i] = ais[i + 1];
-        ais[i + 1] = x;
+        (ais[i + 1], ais[i]) = (ais[i], ais[i + 1]);
         fw.Addins = ais.ToArray();
       }
     }

@@ -21,8 +21,8 @@ namespace XLauncher.Entities.Environments
 
     readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+    readonly Dictionary<string, Framework> fmap = new Dictionary<string, Framework>(StringComparer.OrdinalIgnoreCase);
     List<Framework> frameworks = new List<Framework>();
-    Dictionary<string, Framework> fmap = new Dictionary<string, Framework>(StringComparer.OrdinalIgnoreCase);
 
     public static bool UseEntityCache {
       get { return IEntityExtensions.UseEntityCache; }

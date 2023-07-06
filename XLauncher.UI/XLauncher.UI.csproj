@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\XLauncher.Entities\XLauncher.Entities.csproj" />
-    <PackageReference Include="NLog" Version="5.2.1" />
+    <PackageReference Include="NLog" Version="5.2.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">

@@ -25,7 +25,7 @@ namespace XLauncher.Entities.Environments
     public override void Validate() {
       base.Validate();
       Text = Text?.Trim();
-      if (Value == default(DateTime))
+      if (Value == default)
         Value = DateTime.Today;
     }
 
