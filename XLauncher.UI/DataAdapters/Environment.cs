@@ -31,6 +31,7 @@ namespace XLauncher.UI.DataAdapters
     public string Group => IsLocal ? LocalGroupName : environment.Group.IfNull(PublicGroupName);
     public string Id => $"{Group}::{Name}";
     public string Name => environment.Name;
+    public string Folder => environment.Folder;
     public IEnumerable<string> FNames => environment.Frameworks.Select(f => f.Name);
     public IEnumerable<(string Name, string Value)> EVars => environment.Frameworks.SelectMany(f => f.EVars).Select(ev => (ev.Name, ev.Value));
 

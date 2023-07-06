@@ -39,6 +39,8 @@ namespace XLauncher.Entities.Environments
         frameworks = new List<Framework>(value);
       }
     }
+    [XmlIgnore]
+    public string Folder { get; private set; }
 
     public static void ClearCache() { IEntityExtensions.ClearCache(); }
     public static bool IsEnvironment(string path) {
@@ -147,7 +149,9 @@ namespace XLauncher.Entities.Environments
         foreach (var folder in Directory.GetDirectories(path)) {
           if (IsEnvironment(folder)) {
             try {
-              envs.Add(Environment.Load(folder));
+              var e = Load(folder);
+              e.Folder = folder;
+              envs.Add(e);
             }
             catch (Exception ex) {
               logger.Error(ex, $"Environment '{folder}' is unloadable");
@@ -175,7 +179,11 @@ namespace XLauncher.Entities.Environments
           fw.Apply(ctx);
       }
     }
-    public Environment Clone() { return this.DeepClone(); }
+    public Environment Clone() {
+      var e = this.DeepClone();
+      e.Folder = null;
+      return e;
+    }
     public bool IsAuthorized(string domain, string username, string machine, AuthType defaultAuth) {
       try {
         var ans = AuthDB.Domains.Length > 0
@@ -268,6 +276,8 @@ namespace XLauncher.Entities.Environments
         logger.Trace($"Saving Framework '{ff}'.");
         fw.Serialize(ff);
       }
+
+      Folder = path;
 
     }
     public Session ToSession(ArchType arch) {

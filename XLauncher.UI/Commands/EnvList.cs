@@ -176,6 +176,14 @@ namespace XLauncher.UI
       ExecLaunch(true);
     }
 
+    ICommand cmdEnvOpenFolder;
+    public ICommand CmdEnvOpenFolder => cmdEnvOpenFolder ?? (cmdEnvOpenFolder = new Command(nameof(CmdEnvOpenFolder), this, ExecEnvOpenFolder));
+    void ExecEnvOpenFolder() {
+      if (!(EnvList.SelectedItem is Environment env))
+        return;
+      System.Diagnostics.Process.Start(env.Folder);
+    }
+
     static void NotYet() {
       MessageBox.Show("Not yet implemented.", "XLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
     }

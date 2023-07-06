@@ -101,6 +101,12 @@
                       <Image Source="/Resources/Reload.png"/>
                     </MenuItem.Icon>
                   </MenuItem>
+                  <Separator />
+                  <MenuItem Header="Open folder" Command="{Binding CmdEnvOpenFolder}">
+                    <MenuItem.Icon>
+                      <Image Source="/Resources/OpenedFolder.png"/>
+                    </MenuItem.Icon>
+                  </MenuItem>
                 </ContextMenu>
               </ListBox.ContextMenu>
 
