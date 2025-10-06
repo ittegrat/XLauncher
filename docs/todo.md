@@ -12,14 +12,15 @@ add .net version detection code to setup / xlauncher ==> log
 
 ##  ChangeLog  ##
   ### v0.14.0 DEV
+    - Improve error messages and dll search order when loading xll addins (XAI)
   ### v0.13.0
     - Switch to VS 2022
     - Add NullControl to XLauncher.Entities
     - Add Entity cache
     - Add AppVersion to 'UsageLogger'
-    - tiny fixes & improvements
+    - Tiny fixes & improvements
   ### v0.12.0
-    - tiny fixes & improvements
+    - Tiny fixes & improvements
   ### v0.10.0
     - Add AutoReload and AutoClose timers
     - Delete empty frameworks in local environments
@@ -31,18 +32,18 @@ add .net version detection code to setup / xlauncher ==> log
     - A couple of new sheet functions
     - 'Copy path' context menu items
     - Launch empty session (ctrl+left click)
-    - tiny fixes & improvements
+    - Tiny fixes & improvements
   ### v0.8.0
-    - setup improvements
-    - admin functions improvements
-    - tiny fixes
+    - Setup improvements
+    - Admin functions improvements
+    - Tiny fixes
   ### v0.7.0
-    - generate session
-    - animate reload
-    - tiny fixes
+    - Generate session
+    - Animate reload
+    - Tiny fixes
   ### v0.6.0
     - Admin functions
-    - tiny fixes
+    - Tiny fixes
 
 ##  Documentation  ##
 

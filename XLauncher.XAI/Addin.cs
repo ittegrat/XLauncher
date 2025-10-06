@@ -1,8 +1,11 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using ExcelDna.Integration;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace XLauncher.XAI
 {
@@ -12,6 +15,10 @@ namespace XLauncher.XAI
 
   public class Addin : IExcelAddIn
   {
+
+    [DllImport("kernel32", CharSet = CharSet.Auto, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    static extern bool SetDllDirectory([Optional] string lpPathName);
 
     static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -36,17 +43,20 @@ namespace XLauncher.XAI
         if (!String.IsNullOrWhiteSpace(Session.Title))
           XlCall.Excel(XlCall.xlfAppTitle, Session.Title.Trim());
 
-        XlCall.Excel(XlCall.xlcMessage, false);
-
         Directory.SetCurrentDirectory(cd);
 
       }
       catch (Exception ex) {
-        logger.Error(ex, $"Cannot load session {sf}");
+        logger.Error(ex, $"Cannot load session '{sf}'");
+        MessageBox.Show(
+          $"Cannot load session.\nSession: {sf}\nError: {ex.Message}",
+          $"{Strings.APP_NAME} - Load Session",
+          MessageBoxButtons.OK, MessageBoxIcon.Error
+        );
       }
     }
     public void AutoClose() {
-      logger.Info($"Closing {GetType().FullName}.");
+      logger.Debug($"Closing {GetType().FullName}.");
     }
 
     void LoadAddins() {
@@ -61,21 +71,60 @@ namespace XLauncher.XAI
 
       foreach (var ai in ais) {
 
-        if (!File.Exists(ai.Path)) {
-          logger.Error($"Cannot find file '{ai.Path}'.");
-          var ans = (bool)XlCall.Excel(XlCall.xlcAlert, $"Cannot find file '{ai.Path}'.\nContinue to load the Environment '{Session.Title}' ?", 1);
-          if (ans)
-            continue;
-          else
-            return;
-        }
-
         XlCall.Excel(XlCall.xlcMessage, true, $"Loading {Path.GetFileName(ai.Path)}...");
 
-        if (Path.GetExtension(ai.Path).Trim().ToUpperInvariant() == ".XLL")
-          LoadXLL(ai.Path);
-        else
-          ComLoadAddin(ai.Path, ai.ReadOnly);
+        try {
+
+          if (!File.Exists(ai.Path)) {
+            logger.Error($"Cannot find the file '{ai.Path}'.");
+            throw new FileNotFoundException("Unable to find the specified file.", ai.Path);
+          }
+
+          if (Path.GetExtension(ai.Path).Trim().ToUpperInvariant() == ".XLL")
+            LoadXLL(ai.Path);
+          else
+            ComLoadAddin(ai.Path, ai.ReadOnly);
+
+        }
+        catch (Exception ex) {
+
+          string errMsg;
+          MessageBoxIcon icon;
+
+          switch (ex) {
+            case FileNotFoundException fex:
+              errMsg = $"Cannot find the file:\n{fex.FileName}";
+              icon = MessageBoxIcon.Warning;
+              break;
+            case FileLoadException fex:
+              errMsg = $"Cannot load the file:\n{fex.FileName}";
+              icon = MessageBoxIcon.Error;
+              break;
+            default:
+              logger.Error($"Cannot load the file '{ai.Path}'.");
+              errMsg = $"Cannot load the file:\n{ai.Path}\n\n{(ex.Message.TrimEnd('.') + ".")}";
+              icon = MessageBoxIcon.Error;
+              break;
+          }
+
+          var ans = MessageBox.Show(
+            $"{errMsg}\n\nContinue to load the environment '{Session.Title}' ?",
+            $"{Strings.APP_NAME} - Load addin",
+            MessageBoxButtons.YesNo, icon, MessageBoxDefaultButton.Button2
+          );
+
+          XlCall.Excel(XlCall.xlcMessage, false);
+
+          if (ans == DialogResult.Yes) {
+            logger.Debug($"Continue loading environment '{Session.Title}'.");
+            continue;
+          }
+          else {
+            logger.Debug($"Skip loading remaining addins.");
+            return;
+          }
+
+        }
 
         XlCall.Excel(XlCall.xlcMessage, false);
 
@@ -83,68 +132,31 @@ namespace XLauncher.XAI
 
     }
     void LoadXLL(string path) {
-      try {
-        logger.Debug($"RegisterXLL '{path}'");
-        Directory.SetCurrentDirectory(Path.GetDirectoryName(path));
-        ExcelIntegration.RegisterXLL(path);
-        logger.Debug($"Loaded '{path}'");
+      logger.Debug($"RegisterXLL '{path}'.");
+      var dir = Path.GetDirectoryName(path);
+      if (SetDllDirectory(dir)) {
+        var loaded = ExcelIntegration.RegisterXLL(path) is string;
+        logger.Debug($"{(loaded ? "Loaded" : "Cannot load")} '{path}'.");
+        if (!SetDllDirectory(String.Empty))
+          throw new Win32Exception(Marshal.GetLastWin32Error());
+        if (loaded)
+          return;
+        throw new FileLoadException("Could not load the specified file.", path);
       }
-      catch (Exception ex) {
-        logger.Error(ex, $"Cannot load XLL");
-      }
+      throw new Win32Exception(Marshal.GetLastWin32Error());
     }
     void CApiLoadAddin(string path, bool ro) {
-      try {
-
-        logger.Debug($"XlCall.xlcOpen '{path}'");
-        XlCall.Excel(XlCall.xlcOpen,
-          path,          // file_text
-          3,             // (int)update_links
-          ro,            // read_only
-          Type.Missing,  // format (delimiters in text)
-          Type.Missing,  // Prot_pwd (Password)
-          Type.Missing,  // write_res_pwd (WriteResPassword)
-          true,          // ignore_rorec (IgnoreReadOnlyRecommended)
-          2,             // File_origin (Origin) --> Windows (ANSI)
-          Type.Missing,  // Custom_delimit
-          false,         // Add_logical 
-          Type.Missing,  // Editable 
-          Type.Missing,  // File_access
-          Type.Missing,  // Notify_logical 
-          Type.Missing   // Converter 
-        );
-
-      }
-      catch (Exception ex) {
-        logger.Error(ex, $"Cannot load Addin");
-      }
+      logger.Debug($"XlCall.xlcOpen '{path}'.");
+      var loaded = (bool)XlCall.Excel(XlCall.xlcOpen, path, ExcelMissing.Value, ro);
+      if (!loaded)
+        throw new FileLoadException("Could not load the specified file.", path);
+      logger.Debug($"Loaded '{path}'.");
     }
     void ComLoadAddin(string path, bool ro) {
-      try {
-
-        logger.Debug($"Workbooks.Open '{path}'");
-        ((dynamic)ExcelDnaUtil.Application).Workbooks.Open(
-          path,          // Filename
-          3,             // (int)UpdateLinks (3 --> External references will be updated)
-          ro,            // ReadOnly
-          Type.Missing,  // Format (Text delimiter)
-          Type.Missing,  // Password (Password required to open a protected workbook)
-          Type.Missing,  // WriteResPassword (Password required to write to a write-reserved workbook)
-          true,          // IgnoreReadOnlyRecommended
-          2,             // (XlPlatform)Origin (2 --> xlWindows)
-          Type.Missing,  // Delimiter (If Format is 6 --> use first char of Delimiter as delimiter)
-          false,         // Editable (If the file is an Excel template, open a new workbook based on it)
-          Type.Missing,  // Notify
-          Type.Missing,  // Converter
-          false,         // AddToMru
-          Type.Missing,  // Local
-          Type.Missing   // CorruptLoad
-        );
-
-      }
-      catch (Exception ex) {
-        logger.Error(ex, $"Cannot load '{path}'");
-      }
+      logger.Debug($"Workbooks.Open '{path}'.");
+      var xlApp = ExcelDnaUtil.Application as Excel.Application;
+      var ans = xlApp.Workbooks.Open(path, ReadOnly: ro);
+      logger.Debug($"Loaded '{path}'.");
     }
 
   }

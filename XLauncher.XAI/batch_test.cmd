@@ -1,9 +1,14 @@
 @echo off
 setlocal
 
-set XLAPP=C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE
+set XLSFX=64
+set XLAPP=C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
+
+::set XLSFX=32
+::set XLAPP=C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE
+
 set XLARGS=/x /r
-set XAI=%~dp0XLauncher.xll
+set XAI=%~dp0XLauncher%XLSFX%.xll
 
 set CMDLINE="%XLAPP%" %XLARGS% "%XAI%"
 
