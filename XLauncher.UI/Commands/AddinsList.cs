@@ -259,6 +259,14 @@ namespace XLauncher.UI
 
     }
 
+    ICommand cmdAiOpenFolder;
+    public ICommand CmdAiOpenFolder => cmdAiOpenFolder ?? (cmdAiOpenFolder = new Command(nameof(cmdAiOpenFolder), this, ExecAiOpenFolder));
+    void ExecAiOpenFolder() {
+      if (!(AddinsList.SelectedItem is Addin sai))
+        return;
+      System.Diagnostics.Process.Start(Path.GetDirectoryName(sai.Path));
+    }
+
     void RenderAiMove(Addin ai) {
       CurrentEnvironment.Render(Addins);
       AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path);

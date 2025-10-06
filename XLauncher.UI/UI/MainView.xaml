@@ -332,6 +332,11 @@
                         <Image Source="/Resources/AddToClipboard.png"/>
                       </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem Header="Open folder" Command="{Binding CmdAiOpenFolder}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/OpenedFolder.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
                   </ContextMenu>
                 </ListView.ContextMenu>
 
