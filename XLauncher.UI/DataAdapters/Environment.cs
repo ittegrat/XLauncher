@@ -31,6 +31,7 @@ namespace XLauncher.UI.DataAdapters
     public string Group => IsLocal ? LocalGroupName : environment.Group.IfNull(PublicGroupName);
     public string Id => $"{Group}::{Name}";
     public string Name => environment.Name;
+    public string Description => FormatDescription(environment.Description);
     public string Folder => environment.Folder;
     public IEnumerable<string> FNames => environment.Frameworks.Select(f => f.Name);
     public IEnumerable<(string Name, string Value)> EVars => environment.Frameworks.SelectMany(f => f.EVars).Select(ev => (ev.Name, ev.Value));
@@ -244,6 +245,49 @@ namespace XLauncher.UI.DataAdapters
     }
     //+++++++++++++++++++++++++++++++++
 
+    string FormatDescription(string desc) {
+
+      if (string.IsNullOrWhiteSpace(desc))
+        return desc;
+
+      var words = desc.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+      var llen = Configuration.Instance.DescLineLength;
+
+      var text = new System.Text.StringBuilder();
+      var len = 0; var i = 0;
+      foreach (var word in words) {
+
+        ++i;
+
+        if (len > 0)
+          text.Append(' ');
+
+        if (word.Contains('\n')) {
+          var w = word.Split('\n');
+          text.AppendLine(w[0]);
+          text.Append(w[1]);
+          len = w[1].Length;
+          continue;
+        }
+
+        if (len + word.Length < llen) {
+          text.Append(word);
+          len += 1 + word.Length;
+          continue;
+        }
+
+        if (i == words.Length)
+          text.Append(word);
+        else {
+          text.AppendLine(word);
+          len = 0;
+        }
+
+      }
+
+      return text.ToString();
+
+    }
     string GetPersistenceDirname() {
       return Path.Combine(Configuration.Instance.UserRoot, $"{Name.ToPascalCase("_")}");
     }

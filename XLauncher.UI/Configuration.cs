@@ -45,6 +45,7 @@ namespace XLauncher.UI
     public string UserRoot { get; }
 
     public AuthType DefaultAuth { get; }
+    public int DescLineLength { get; }
     public string GroupNameLocal { get; }
     public string GroupNamePublic { get; }
     public TimeSpan FlashSpan { get; }
@@ -119,6 +120,7 @@ namespace XLauncher.UI
       TryCreateDirectory(UserRoot);
 
       DefaultAuth = (AuthType)Enum.Parse(typeof(AuthType), GetValue("ui.default.auth", "deny"), true);
+      DescLineLength = GetValue("ui.envdesc.linelen", 80);
       GroupNameLocal = GetValue("ui.groupname.local", "User");
       GroupNamePublic = GetValue("ui.groupname.public", "Public");
       FlashSpan = TimeSpan.FromMilliseconds(GetValue("ui.flash.span", 750));

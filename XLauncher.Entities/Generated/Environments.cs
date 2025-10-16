@@ -144,6 +144,8 @@ namespace XLauncher.Entities.Environments {
         
         private string nameField;
         
+        private string descriptionField;
+        
         private string groupField;
         
         /// <remarks/>
@@ -176,6 +178,17 @@ namespace XLauncher.Entities.Environments {
             }
             set {
                 this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute("description")]
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
             }
         }
         

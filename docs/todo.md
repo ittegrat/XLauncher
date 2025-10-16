@@ -13,6 +13,7 @@ add .net version detection code to setup / xlauncher ==> log
 ##  ChangeLog  ##
   ### v0.14.0 DEV
     - Improve error messages and dll search order when loading xll addins (XAI)
+    - Add 'description' property to environments
     - Tiny fixes & improvements
   ### v0.13.0
     - Switch to VS 2022
