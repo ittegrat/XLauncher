@@ -20,6 +20,7 @@ namespace XLauncher.UI.DataAdapters
 
     readonly EE.Addin addin;
 
+    public string FileName => addin.FileName;
     public string Id => (addin is EE.XLL ? String.Empty : $"{Arch}::") + addin.Id;
     public string QFileName => (addin is EE.XLL ? String.Empty : $"{Arch}::") + addin.QFileName;
 

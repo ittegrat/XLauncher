@@ -269,7 +269,7 @@
                     <GridViewColumn Header="Path" Width="Auto">
                       <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                          <TextBlock Style="{StaticResource AddinPath}" Text="{Binding Path}" />
+                          <TextBlock Style="{StaticResource AddinPath}" Text="{Binding Path}" ToolTip="{Binding FileName}" />
                         </DataTemplate>
                       </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -341,6 +341,12 @@
                 </ListView.ContextMenu>
 
                 <ListView.InputBindings>
+                  <KeyBinding Gesture="Delete"
+                              Command="{Binding CmdAiDelete}"
+                  />
+                  <KeyBinding Gesture="Insert"
+                              Command="{Binding CmdAiAdd}"
+                  />
                   <KeyBinding Gesture="ALT+Up"
                               Command="{Binding CmdAiMoveUp}"
                   />
@@ -419,6 +425,12 @@
                 </ListView.ContextMenu>
 
                 <ListView.InputBindings>
+                  <KeyBinding Gesture="Delete"
+                              Command="{Binding CmdEvDelete}"
+                  />
+                  <KeyBinding Gesture="Insert"
+                              Command="{Binding CmdEvAdd}"
+                  />
                   <KeyBinding Gesture="ALT+Up"
                               Command="{Binding CmdEvMoveUp}"
                   />

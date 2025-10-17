@@ -29,7 +29,7 @@ namespace XLauncher.UI
       var sai = (Addin)AddinsList.SelectedItem;
 
       var ai = new Addin {
-        Framework = sai?.Framework,
+        Framework = sai?.Framework ?? CurrentEnvironment.FNames.Last(),
         ReadOnly = true
       };
 
@@ -87,9 +87,7 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.Add(ai, sai);
-      CurrentEnvironment.Render(Addins);
-      UpdateColumnWidths(AddinsList);
-      AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path);
+      RenderCommandAi(() => AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path));
 
     }
 
@@ -110,6 +108,9 @@ namespace XLauncher.UI
 
       var last = CurrentEnvironment.ItemsCount(ai.Framework) < 2;
 
+      if (CheckLast(last))
+        return;
+
       if (Configuration.Instance.LocalSettings.ConfirmDelete) {
         string msg;
         if (last) {
@@ -127,8 +128,7 @@ namespace XLauncher.UI
         CurrentEnvironment.Remove(ai.Framework);
       else
         CurrentEnvironment.Remove(ai);
-      CurrentEnvironment.Render(Addins);
-      AddinsList.SelectedIndex = Math.Min(idx, Addins.Count - 1);
+      RenderCommandAi(() => AddinsList.SelectedIndex = Math.Min(idx, Addins.Count - 1));
 
     }
 
@@ -230,7 +230,7 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveDown(ai);
-      RenderAiMove(ai);
+      RenderCommandAi(() => AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path));
 
     }
 
@@ -255,7 +255,7 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveUp(ai);
-      RenderAiMove(ai);
+      RenderCommandAi(() => AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path));
 
     }
 
@@ -267,11 +267,13 @@ namespace XLauncher.UI
       System.Diagnostics.Process.Start(Path.GetDirectoryName(sai.Path));
     }
 
-    void RenderAiMove(Addin ai) {
+    void RenderCommandAi(Action UpdateSelected) {
       CurrentEnvironment.Render(Addins);
-      AddinsList.SelectedItem = Addins.First(a => a.Path == ai.Path);
+      UpdateSelected();
+      UpdateColumnWidths(AddinsList);
       AddinsList.UpdateLayout();
-      ((ListViewItem)AddinsList.ItemContainerGenerator.ContainerFromIndex(AddinsList.SelectedIndex)).Focus();
+      if (AddinsList.SelectedIndex >= 0)
+        ((ListViewItem)AddinsList.ItemContainerGenerator.ContainerFromIndex(AddinsList.SelectedIndex)).Focus();
     }
 
   }

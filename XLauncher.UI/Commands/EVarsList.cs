@@ -24,7 +24,7 @@ namespace XLauncher.UI
       var sev = (EVar)EVarsList.SelectedItem;
 
       var ev = new EVar {
-        Framework = sev?.Framework
+        Framework = sev?.Framework ?? CurrentEnvironment.FNames.Last()
       };
 
       var evbox = new EVarBox(CurrentEnvironment.FNames) {
@@ -55,9 +55,7 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.Add(ev, sev);
-      CurrentEnvironment.Render(EVars);
-      UpdateColumnWidths(EVarsList);
-      EVarsList.SelectedItem = EVars.First(e => e.Name == ev.Name);
+      RenderCommandEv(() => EVarsList.SelectedItem = EVars.First(e => e.Name == ev.Name));
 
     }
 
@@ -69,6 +67,9 @@ namespace XLauncher.UI
         return;
 
       var last = CurrentEnvironment.ItemsCount(ev.Framework) < 2;
+
+      if (CheckLast(last))
+        return;
 
       if (Configuration.Instance.LocalSettings.ConfirmDelete) {
         string msg;
@@ -87,8 +88,7 @@ namespace XLauncher.UI
         CurrentEnvironment.Remove(ev.Framework);
       else
         CurrentEnvironment.Remove(ev);
-      CurrentEnvironment.Render(EVars);
-      EVarsList.SelectedIndex = Math.Min(idx, EVars.Count - 1); ;
+      RenderCommandEv(() => EVarsList.SelectedIndex = Math.Min(idx, EVars.Count - 1));
 
     }
 
@@ -164,7 +164,7 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveDown(ev);
-      RenderEvMove(ev);
+      RenderCommandEv(() => EVarsList.SelectedItem = EVars.First(e => e.Name == ev.Name));
 
     }
 
@@ -189,15 +189,17 @@ namespace XLauncher.UI
         return;
 
       CurrentEnvironment.MoveUp(ev);
-      RenderEvMove(ev);
+      RenderCommandEv(() => EVarsList.SelectedItem = EVars.First(e => e.Name == ev.Name));
 
     }
 
-    void RenderEvMove(EVar ev) {
+    void RenderCommandEv(Action UpdateSelected) {
       CurrentEnvironment.Render(EVars);
-      EVarsList.SelectedItem = EVars.First(e => e.Name == ev.Name);
+      UpdateSelected();
+      UpdateColumnWidths(EVarsList);
       EVarsList.UpdateLayout();
-      ((ListViewItem)EVarsList.ItemContainerGenerator.ContainerFromIndex(EVarsList.SelectedIndex)).Focus();
+      if (EVarsList.SelectedIndex >= 0)
+        ((ListViewItem)EVarsList.ItemContainerGenerator.ContainerFromIndex(EVarsList.SelectedIndex)).Focus();
     }
 
   }

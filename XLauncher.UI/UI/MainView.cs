@@ -101,6 +101,13 @@ namespace XLauncher.UI
       }
     }
 
+    bool CheckLast(bool last) {
+      if (last && CurrentEnvironment.FNames.Count() == 1) {
+        MessageBox.Show("The last element of the last framework cannot be deleted.", Strings.APP_NAME, MessageBoxButton.OK, MessageBoxImage.Error);
+        return true;
+      }
+      return false;
+    }
     void LoadEnvironments() {
 
       Environments.Clear();
