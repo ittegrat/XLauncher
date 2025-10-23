@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
-  <Import Project="$(SolutionDir).msbuild\Common.props" />
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblySearchPaths>$(AssemblySearchPaths);{GAC}</AssemblySearchPaths>
   </PropertyGroup>
 
@@ -18,7 +16,6 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <Import Project="$(SolutionDir)..\_libs_\ExcelDna\ExcelDna.targets" />
-  <Import Project="$(SolutionDir).msbuild\Common.targets" />
 
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -27,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\XLauncher.Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Include="..\XLauncher.Shared\Strings.cs" Link="Strings.cs" />
   </ItemGroup>
 

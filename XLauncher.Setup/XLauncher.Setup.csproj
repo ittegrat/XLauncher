@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
-  <Import Project="$(SolutionDir).msbuild\Common.props" />
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppConfig>App.$(Configuration).config</AppConfig>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-  <Import Project="$(SolutionDir).msbuild\Common.targets" />
 
   <ItemGroup>
-    <Compile Include="..\XLauncher.Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Include="..\XLauncher.Shared\Strings.cs" Link="Strings.cs" />
   </ItemGroup>
 
