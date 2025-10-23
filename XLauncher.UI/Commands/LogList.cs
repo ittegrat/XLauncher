@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 using NLog;
@@ -8,38 +10,12 @@ namespace XLauncher.UI
   public partial class MainView
   {
 
-    ICommand cmdClearLogs;
-    public ICommand CmdClearLogs { get { return cmdClearLogs ?? (cmdClearLogs = new Command(nameof(CmdClearLogs), this, ExecClearLogs)); } }
-    void ExecClearLogs() {
-      App.Logs.Clear();
-    }
+    void OnSelectUiLoglevel(object sender, SelectionChangedEventArgs e) {
 
-    ICommand cmdOpenLogFolder;
-    public ICommand CmdOpenLogFolder { get { return cmdOpenLogFolder ?? (cmdOpenLogFolder = new Command(nameof(CmdOpenLogFolder), this, ExecOpenLogFolder)); } }
-    void ExecOpenLogFolder() {
-      System.Diagnostics.Process.Start(Configuration.Instance.LocalTempFolder);
-    }
+      if (e.AddedItems.Count != 1)
+        return;
 
-    ICommand cmdResetLogLevel;
-    public ICommand CmdResetLogLevel { get { return cmdResetLogLevel ?? (cmdResetLogLevel = new Command(nameof(CmdResetLogLevel), this, ExecResetLogLevel)); } }
-    void ExecResetLogLevel() {
-      LogManager.Configuration = LogManager.Configuration.Reload();
-      LogManager.ReconfigExistingLoggers();
-    }
-
-    ICommand cmdSetDebugLogLevel;
-    public ICommand CmdSetDebugLogLevel { get { return cmdSetDebugLogLevel ?? (cmdSetDebugLogLevel = new Command(nameof(CmdSetDebugLogLevel), this, ExecSetDebugLogLevel)); } }
-    void ExecSetDebugLogLevel() {
-      SetLogLevel(LogLevel.Debug);
-    }
-
-    ICommand cmdSetTraceLogLevel;
-    public ICommand CmdSetTraceLogLevel { get { return cmdSetTraceLogLevel ?? (cmdSetTraceLogLevel = new Command(nameof(CmdSetTraceLogLevel), this, ExecSetTraceLogLevel)); } }
-    void ExecSetTraceLogLevel() {
-      SetLogLevel(LogLevel.Trace);
-    }
-
-    void SetLogLevel(LogLevel minLevel) {
+      var minLevel = (LogLevel)e.AddedItems[0];
 
       foreach (
         var rule in LogManager.Configuration.LoggingRules.Where(r => r.RuleName != USAGE_LOGGER)
@@ -49,6 +25,50 @@ namespace XLauncher.UI
 
       LogManager.ReconfigExistingLoggers();
 
+    }
+
+    ICommand cmdLogClearView;
+    public ICommand CmdLogClearView { get { return cmdLogClearView ?? (cmdLogClearView = new Command(nameof(CmdLogClearView), this, ExecLogClearView)); } }
+    void ExecLogClearView() {
+      App.Logs.Clear();
+    }
+
+    ICommand cmdLogCopyAllLines;
+    public ICommand CmdLogCopyAllLines { get { return cmdLogCopyAllLines ?? (cmdLogCopyAllLines = new Command(nameof(CmdLogCopyAllLines), this, ExecLogCopyAllLines, CanExecLogCopyAllLines)); } }
+    bool CanExecLogCopyAllLines() {
+      return App.Logs.Count > 0;
+    }
+    void ExecLogCopyAllLines() {
+      var sb = new System.Text.StringBuilder();
+      foreach (var line in App.Logs) {
+        sb.AppendLine(line);
+      }
+      Clipboard.SetText(sb.ToString());
+    }
+
+    ICommand cmdLogCopyLine;
+    public ICommand CmdLogCopyLine { get { return cmdLogCopyLine ?? (cmdLogCopyLine = new Command(nameof(CmdLogCopyLine), this, ExecLogCopyLine, CanExecLogCopyLine)); } }
+    bool CanExecLogCopyLine() {
+      return LogView.SelectedIndex >= 0;
+    }
+    void ExecLogCopyLine() {
+      var line = (string)LogView.SelectedItem;
+      Clipboard.SetText(line);
+    }
+
+    ICommand cmdLogOpenFolder;
+    public ICommand CmdLogOpenFolder { get { return cmdLogOpenFolder ?? (cmdLogOpenFolder = new Command(nameof(CmdLogOpenFolder), this, ExecLogOpenFolder)); } }
+    void ExecLogOpenFolder() {
+      System.Diagnostics.Process.Start(Configuration.Instance.LocalTempFolder);
+    }
+
+    ICommand cmdLogResetLevels;
+    public ICommand CmdLogResetLevels { get { return cmdLogResetLevels ?? (cmdLogResetLevels = new Command(nameof(CmdLogResetLevels), this, ExecLogResetLevels)); } }
+    void ExecLogResetLevels() {
+      UiLoglevel.SelectedIndex = -1;
+      XaiLoglevel.SelectedItem = Configuration.Instance.XaiLoglevel;
+      LogManager.Configuration = LogManager.Configuration.Reload();
+      LogManager.ReconfigExistingLoggers();
     }
 
   }

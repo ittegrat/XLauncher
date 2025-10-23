@@ -14,6 +14,7 @@ namespace XLauncher.UI
   {
 
     const string USAGE_LOGGER = "UsageLogger";
+    const string XAI_LOGLEVEL = "XLAUNCHER_XAI_LOGLEVEL";
     static readonly NLog.Logger uLogger = NLog.LogManager.GetLogger(USAGE_LOGGER);
 
     ICommand cmdLaunch;
@@ -115,6 +116,9 @@ namespace XLauncher.UI
 
       foreach (var ev in env.EVars)
         startInfo.EnvironmentVariables[ev.Name] = System.Environment.ExpandEnvironmentVariables(ev.Value);
+
+      if (XaiLoglevel.SelectedItem is NLog.LogLevel xaiLoglevel)
+        startInfo.EnvironmentVariables.Add(XAI_LOGLEVEL, xaiLoglevel.Name);
 
       var proc = Process.Start(startInfo);
 

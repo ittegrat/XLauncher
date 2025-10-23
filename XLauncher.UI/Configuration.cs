@@ -40,6 +40,7 @@ namespace XLauncher.UI
 
     public string XaiPath => GetAddinFilename();
     public string XArgs { get; }
+    public NLog.LogLevel XaiLoglevel { get; }
 
     public IEnumerable<string> PublicRoots => sharedRoots.Union(LocalSettings.RootedLocalRoots);
     public string UserRoot { get; }
@@ -103,6 +104,7 @@ namespace XLauncher.UI
       ;
 
       XArgs = GetValue("excel.args", "/x /r");
+      XaiLoglevel = NLog.LogLevel.FromString(GetValue("excel.addin.loglevel", "Info"));
 
       sharedRoots = config.Keys
         .Cast<string>()
