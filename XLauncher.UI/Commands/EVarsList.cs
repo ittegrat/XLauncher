@@ -59,6 +59,16 @@ namespace XLauncher.UI
 
     }
 
+    ICommand cmdEvCopy;
+    public ICommand CmdEvCopy => cmdEvCopy ?? (cmdEvCopy = new Command(nameof(CmdEvCopy), this, ExecEvCopy, CanExecEvCopy));
+    bool CanExecEvCopy() {
+      return EVarsList.SelectedIndex >= 0;
+    }
+    void ExecEvCopy() {
+      var ev = (EVar)EVarsList.SelectedItem;
+      Clipboard.SetText($"{ev.Name}={ev.Value}");
+    }
+
     ICommand cmdEvDelete;
     public ICommand CmdEvDelete => cmdEvDelete ?? (cmdEvDelete = new Command(nameof(CmdEvDelete), this, ExecEvDelete, IsEVarSelected));
     void ExecEvDelete() {

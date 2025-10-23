@@ -422,6 +422,12 @@
                         <Image Source="/Resources/DownArrow.png"/>
                       </MenuItem.Icon>
                     </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Copy" Command="{Binding CmdEvCopy}">
+                      <MenuItem.Icon>
+                        <Image Source="/Resources/AddToClipboard.png"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
                   </ContextMenu>
                 </ListView.ContextMenu>
 
