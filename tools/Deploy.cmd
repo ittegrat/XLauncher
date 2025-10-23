@@ -21,7 +21,7 @@ msbuild %TOPDIR%XLauncher.sln -t:Build "-p:Configuration=%CFG%;Platform=Any CPU"
 set BLD=%TOPDIR%_build_\AnyCPU_%CFG%\
 set DST=%TOPDIR%_dist_\
 
-rmdir /s /q %DST%
+if exist %DST% rmdir /s /q %DST%
 
 if not exist %DST% mkdir %DST%
 
@@ -75,6 +75,10 @@ for %%f in (
 set GETVER=powershell -ExecutionPolicy RemoteSigned -file %~dp0GetVer.ps1
 set ASM=%APP%XLauncher.exe
 %GETVER% %ASM% > %DST%version.txt
+
+set GETDATE=powershell -ExecutionPolicy RemoteSigned -file %~dp0GetForceDate.ps1
+set DAYS=7
+%GETDATE% %DAYS% > %DST%force_update.txt
 
 endlocal
 

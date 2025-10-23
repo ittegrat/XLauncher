@@ -17,6 +17,7 @@ namespace XLauncher.UI
   {
 
     const int SW_RESTORE = 9;
+    const string EXCEL_PROCNAME = "EXCEL";
 
     [DllImport("User32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -80,8 +81,8 @@ namespace XLauncher.UI
 
         logger.Info("Single instance mutex acquired.");
 
-        if (check && NeedsUpdate(out string updaterPath)) {
-          if (StartUpdate(updaterPath)) {
+        if (check && NeedsUpdate(out string updaterPath, out bool forceUpdate)) {
+          if (StartUpdate(updaterPath, forceUpdate)) {
             logger.Debug("Updater process started.");
             return;
           }
@@ -121,7 +122,7 @@ namespace XLauncher.UI
       try {
         if (autoReload.Tag != null) {
           logger.Info("Starting daily maintenance.");
-          if (NeedsUpdate(out string _)) {
+          if (NeedsUpdate(out var _, out var __)) {
             autoClose.Interval = NextInterval(config.AutoCloseTime, 0);
             logger.Info($"Setting AutoClose timer at '{DateTime.Now + autoClose.Interval}'.");
             autoClose.Tick += (s, e) => {
@@ -195,11 +196,12 @@ namespace XLauncher.UI
       Shutdown();
 
     }
-    bool NeedsUpdate(out string updaterPath) {
+    bool NeedsUpdate(out string updaterPath, out bool forceUpdate) {
 
       logger.Trace("Checking updates.");
 
       updaterPath = null;
+      forceUpdate = config.ForceUpdate;
 
       try {
 
@@ -212,7 +214,14 @@ namespace XLauncher.UI
           logger.Debug($"This version: {Version}");
           logger.Debug($"Other version: {other}");
           if (other > Version) {
+            var ffile = Path.Combine(root, config.ForceUpdateFile);
+            if (File.Exists(ffile)) {
+              var text = File.ReadAllText(ffile).Trim();
+              var date = DateTime.ParseExact(text, "yyyyMMdd", null);
+              forceUpdate = DateTime.Today > date;
+            }
             logger.Info($"Updating to version '{other}'.");
+            logger.Info($"Force update is '{forceUpdate}'.");
             updaterPath = Path.Combine(root, config.SetupFilename);
             return true;
           }
@@ -241,32 +250,38 @@ namespace XLauncher.UI
       return dt - now + o;
 
     }
-    bool StartUpdate(string updaterPath) {
+    bool StartUpdate(string updaterPath, bool forceUpdate) {
 
       if (
-        Process.GetProcessesByName("EXCEL").Count() > 0 &&
+        Process.GetProcessesByName(EXCEL_PROCNAME).Length > 0 &&
         MessageBoxResult.OK != MessageBox.Show(
           $"A new version of the {Strings.APP_NAME} is available.\n" +
           "Please close all your EXCEL instances and press the OK button to start" +
-          " the update, or press the Cancel button to postpone it to the next time.",
+          (forceUpdate
+            ? " the update process."
+            : " the update process, or press the Cancel button to postpone it to the next time."
+          ),
           Strings.APP_NAME,
-          MessageBoxButton.OKCancel,
+          forceUpdate ? MessageBoxButton.OK : MessageBoxButton.OKCancel,
           MessageBoxImage.Information
       )) {
         logger.Info($"Update cancelled by the user.");
         return false;
       }
 
-      if (Process.GetProcessesByName("EXCEL").Count() > 0) {
+      if (Process.GetProcessesByName(EXCEL_PROCNAME).Length > 0) {
 
         var ans = MessageBox.Show(
           "There are still EXCEL processes running. Do you want the" +
-          $" {Strings.APP_NAME} to try to kill them?\n" +
+          $" {Strings.APP_NAME} to try to kill them?\n\n" +
           "Press the YES button to try\n" +
-          "Press the NO button to continue without trying\n" +
-          "Press the CANCEL button to postpone the update",
+          "Press the NO button to continue without trying" +
+          (forceUpdate
+            ? String.Empty
+            : "\nPress the CANCEL button to postpone the update"
+          ),
           Strings.APP_NAME,
-          MessageBoxButton.YesNoCancel,
+          forceUpdate ? MessageBoxButton.YesNo : MessageBoxButton.YesNoCancel,
           MessageBoxImage.Warning,
           MessageBoxResult.No
         );
@@ -277,13 +292,16 @@ namespace XLauncher.UI
         }
 
         if (ans == MessageBoxResult.Yes) {
-          logger.Info("Killing EXCEL process.");
-          Array.ForEach(Process.GetProcessesByName("EXCEL"), p => {
-            try {
-              p.Kill();
-            }
-            catch (Exception ex) { logger.Debug(ex, $"Kill process failed"); }
-          });
+          logger.Info("Killing EXCEL processes.");
+          var killRetry = 3;
+          var procs = Process.GetProcessesByName(EXCEL_PROCNAME);
+          while (procs.Length > 0 && --killRetry >= 0) {
+            Array.ForEach(procs, p => {
+              try { p.Kill(); }
+              catch (Exception ex) { logger.Debug(ex, $"Kill process failed"); }
+            });
+            procs = Process.GetProcessesByName(EXCEL_PROCNAME);
+          }
         }
 
       }

@@ -2,7 +2,6 @@ fix test cases
 Add ChangeLog.md and README.md
 remote config
 detect include recursion in entities
-force update after n trials / expiry date (e.g. 1 month of deprecation)
 config => add / toggle trusted location in registry for XLauncher folder
 HKEY_CURRENT_USER/Software/Microsoft/Office/16.0/application_name/Security/Trusted Locations
 revise random timespan
@@ -11,10 +10,11 @@ title format (string) + yes / no title
 add .net version detection code to setup / xlauncher ==> log
 
 ##  ChangeLog  ##
-  ### v0.14.0 DEV
+  ### v0.14.0
     - Improve error messages and dll search order when loading xll addins (XAI)
     - Add 'description' property to environments
     - Improve log handling
+    - Add a 'Force Update' date
     - Tiny fixes & improvements
   ### v0.13.0
     - Switch to VS 2022

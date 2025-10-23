@@ -23,8 +23,10 @@ namespace XLauncher.UI
     public static Configuration Instance { get; } = new Configuration();
 
     // *****   APP CONFIG   *****
-    public string SetupFilename { get; }
+    public bool ForceUpdate { get; }
+    public string ForceUpdateFile { get; }
     public string VersionFile { get; }
+    public string SetupFilename { get; }
     public TimeSpan WaitTimeOut { get; }
     public IEnumerable<string> UpdateRoots { get; }
 
@@ -71,8 +73,10 @@ namespace XLauncher.UI
 
       Environment.UseEntityCache = GetValue("entity.usecache", false);
 
-      SetupFilename = GetValue("setup.filename", "XLauncher.Setup.exe");
+      ForceUpdate = GetValue("setup.forceupdate", false);
+      ForceUpdateFile = GetValue("setup.forceupdate.file", "force_update.txt");
       VersionFile = GetValue("setup.versionfile", "version.txt");
+      SetupFilename = GetValue("setup.filename", "XLauncher.Setup.exe");
       WaitTimeOut = TimeSpan.FromSeconds(GetValue("setup.waittimeout", 15));
       UpdateRoots = config.Keys
         .Cast<string>()
